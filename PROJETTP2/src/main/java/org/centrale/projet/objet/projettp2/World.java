@@ -10,14 +10,16 @@ package org.centrale.projet.objet.projettp2;
  */
 public class World{
     
-    public Point2D robin;
-    public Point2D peon;
+    public Archer robin;
+    public Paysan peon;
     public Lapin bugs;
     public Point2D Lapin1;
     
     public void World(){
+        
     
     }
+    
     }
     
 }
