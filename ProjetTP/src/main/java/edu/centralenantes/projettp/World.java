@@ -44,7 +44,7 @@ public class World {
         this.bugs = bugs;
     }
     
-    public void creerMondeAlea(){
+    public World creerMondeAlea(){
         Random alea=new Random();
         World w=new World();
         int n1=alea.nextInt(10000);
@@ -56,5 +56,6 @@ public class World {
         w.getRobin().setPos(new Point2D(n1,n2));
         w.peon.setPos(new Point2D(n3,n4));
         w.bugs.setPos(new Point2D(n5,n6));
+        return w;
     }
 }
