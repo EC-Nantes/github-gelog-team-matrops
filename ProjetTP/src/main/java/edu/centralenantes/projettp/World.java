@@ -19,15 +19,42 @@ public class World {
         peon = new Paysan();
         bugs = new Lapin();
     }
+
+    public Archer getRobin() {
+        return robin;
+    }
+
+    public void setRobin(Archer robin) {
+        this.robin = robin;
+    }
+
+    public Paysan getPeon() {
+        return peon;
+    }
+
+    public void setPeon(Paysan peon) {
+        this.peon = peon;
+    }
+
+    public Lapin getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(Lapin bugs) {
+        this.bugs = bugs;
+    }
     
     public void creerMondeAlea(){
         Random alea=new Random();
+        World w=new World();
         int n1=alea.nextInt(10000);
         int n2=alea.nextInt(10000);
         int n3=alea.nextInt(10000);
         int n4=alea.nextInt(10000);
         int n5=alea.nextInt(10000);
         int n6=alea.nextInt(10000);
-        Lapin(int pV,int dA,int pPar, int paAtt, int paPar, Point2D p)
+        w.getRobin().setPos(new Point2D(n1,n2));
+        w.peon.setPos(new Point2D(n3,n4));
+        w.bugs.setPos(new Point2D(n5,n6));
     }
 }
