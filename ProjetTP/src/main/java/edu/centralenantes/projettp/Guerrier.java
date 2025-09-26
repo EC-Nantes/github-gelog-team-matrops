@@ -10,22 +10,16 @@ import java.util.Random;
  *
  * @author selli
  */
-public class Archer extends Personnage {
-    private int nbFleches;
-    
-    public Archer(int pV, int dA, int paAtt, int paPar, int pPar, Point2D p, int nb, String n, int dMax){
+public class Guerrier extends Personnage {
+    public Guerrier(int pV, int dA, int paAtt, int paPar, int pPar, Point2D p, String n, int dMax){
         super(pV,dA,paAtt, paPar, pPar, p,n,dMax);
-        this.nbFleches=nb;
     }
-    public Archer(Archer a){
+    public Guerrier(Guerrier a){
         super((Personnage)a);
-        nbFleches=a.nbFleches;
     }
-    public Archer(){
-        super(0,0,0,0,0,new Point2D(0,0), "Légolas", 0);
-        nbFleches=0;
+    public Guerrier(){
+        super(0,0,0,0,0, new Point2D(0,0), "Légolas", 0);
     }
-    
     public void combattre (Creature c){
         Random alea=new Random();
         int na =alea.nextInt(100);
