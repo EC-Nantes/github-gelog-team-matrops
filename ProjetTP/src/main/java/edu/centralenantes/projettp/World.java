@@ -22,7 +22,7 @@ public class World {
     private Guerrier grosBill;
     private Loup wolfie;
     
-    World(){
+    public World(){
         robin = new Archer();
         peon = new Paysan();
         bugs1 = new Lapin();
