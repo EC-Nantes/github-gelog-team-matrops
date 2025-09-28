@@ -4,19 +4,40 @@
  */
 package org.centrale.projet.objet.projettp2;
 
+import java.util.Random;
+
 /**
- *
- * @author Max
+ * @author Justine Sellier
+ * @author Max Perron
  */
 public class Lapin extends Monstre {
+
+    /**
+     *
+     * @param pV
+     * @param dA
+     * @param pPar
+     * @param paAtt
+     * @param paPar
+     * @param p
+     */
     public Lapin(int pV, int dA, int pPar, int paAtt, int paPar, Point2D p){
-        super.Monstre(pV,dA,pPar,paAtt,paPar,p);
+        super(pV,dA,pPar,paAtt,paPar,p);
     }
+
+    /**
+     *
+     * @param l
+     */
     public Lapin(Lapin l){
-        super.Monstre(l);
+        super(l);
     }
+
+    /**
+     *
+     */
     public Lapin(){
-        super.Monstre();
+        super();
     }
-    
+   
 }
