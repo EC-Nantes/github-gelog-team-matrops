@@ -3,27 +3,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package edu.centralenantes.projettp;
-
 import java.util.Random;
 
 /**
  *
  * @author selli
  */
-public class Archer extends Personnage {
-    private int nbFleches;
+public class Loup extends Monstre {
     
-    public Archer(int pV, int dA, int paAtt, int paPar, int pPar, Point2D p, int nb, String n, int dMax){
-        super(pV,dA,paAtt, paPar, pPar, p,n,dMax);
-        this.nbFleches=nb;
+    public Loup (int pV,int dA,int pPar, int paAtt, int paPar, Point2D p){
+        super(pV,dA,pPar,paAtt,paPar,p);
     }
-    public Archer(Archer a){
-        super((Personnage)a);
-        nbFleches=a.nbFleches;
+    
+    public Loup (Lapin l){
+        super((Monstre)l);
     }
-    public Archer(){
-        super(0,0,0,0,0,new Point2D(0,0), "Légolas", 0);
-        nbFleches=0;
+    
+    public Loup (){
+        super(0,0,0,0,0,new Point2D(0,0));
     }
     
     public void combattre (Creature c){
