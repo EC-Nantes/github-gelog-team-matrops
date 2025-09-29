@@ -5,28 +5,41 @@
 package org.centrale.projet.objet.projettp2;
 import java.util.Random;
 /**
+ * Un monde
  * @author Justine Sellier
  * @author Max Perron
+ * 
  */
 public class World{
     
     /**
-     * Déclaration d'un Archer 
+     * Déclaration d'un Archer "robin"
      */
     public Archer robin;
 
     /**
-     * Déclaration d'un Paysan
+     * Déclaration d'un Paysan "peon"
      */
     public Paysan peon;
 
     /**
-     * Déclaration d'un Lapin
+     * Déclaration d'un Lapin "bugs"
      */
     public Lapin bugs;
     
+    /**
+     *Déclaration d'un Guerrier "guillaumeT"
+     */
     public Guerrier guillaumeT;
+
+    /**
+     * Déclaration d'une potion de soin "potS"
+     */
     public PotionSoin potS;
+
+    /**
+     *Déclaration d'une épee "epee"
+     */
     public Epee epee;
     
 
@@ -46,6 +59,7 @@ public class World{
 
     /**
      * Création d'un monde avec des positions aléatoire pour personnages/monstres
+     * Création d'un archer, guerrier, paysan, lapin, potionsoin
      */
     public void creerMondeAlea(){
         Point2D pA,pP,pL,pG,pPotS;
