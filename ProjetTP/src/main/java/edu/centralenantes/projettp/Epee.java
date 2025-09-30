@@ -43,7 +43,7 @@ public class Epee extends Objet {
     }
     
     public Epee(){
-        super("Epee", new Point2D(0,0),1);
+        super("Epee", new Point2D(0,0),2);
         ptAtt=1;
         dura=1;
     }
