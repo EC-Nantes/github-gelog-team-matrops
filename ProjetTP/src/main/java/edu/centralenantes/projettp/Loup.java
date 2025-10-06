@@ -15,26 +15,26 @@ public class Loup extends Monstre {
         super(pV,dA,pPar,paAtt,paPar,p);
     }
     
-    public Loup (Lapin l){
+    public Loup (Loup l){
         super((Monstre)l);
     }
     
     public Loup (){
-        super(0,0,0,0,0,new Point2D(0,0));
+        super(10,3,0,4,0,new Point2D(0,0));
     }
     
     public void combattre (Creature c){
         Random alea=new Random();
         int na =alea.nextInt(100);
         int np =alea.nextInt(100);
-        if (na<=c.getPageAtt()){
-            if (np>=this.getPagePar()){
-                this.setPtVie(this.getPtVie()-c.getDegAtt());
-            }
-        }
-        if (na<=this.getPageAtt()){
-            if (np>=c.getPagePar()){
-                c.setPtVie(c.getPtVie()-this.getDegAtt());
+        if (this.getPos()==c.getPos()){
+            if (na<=this.getPageAtt()){
+                if (np>c.getPagePar()){
+                    c.setPtVie(c.getPtVie()-this.getDegAtt());
+                }
+                else {
+                    c.setPtVie(c.getPtVie()-this.getDegAtt()+c.getPtPar());
+                }
             }
         }
     }

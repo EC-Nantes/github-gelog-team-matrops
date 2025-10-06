@@ -127,6 +127,7 @@ public class Creature {
         if (n==7){
             p.translate(-1,1);
         }
+        setPos(p);
     }
 
 }

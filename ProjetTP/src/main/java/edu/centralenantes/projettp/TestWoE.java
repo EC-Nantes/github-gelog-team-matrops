@@ -10,6 +10,17 @@ package edu.centralenantes.projettp;
  */
 public class TestWoE {
     public static void main(String[] args) {
+        World w = new World();
+        w.creerMondeAlea();
+        
+        w.getGuillaumeT().setNom("GuillaumeT");
+        w.setGuillaumeT(new Archer(w.getRobin()));
+        
+        w.afficheWorld();
+        
+        w.tourDeJeu();
+        
+        w.afficheWorld();
         
     }
 }

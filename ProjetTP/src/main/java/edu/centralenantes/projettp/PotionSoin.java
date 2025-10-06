@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package edu.centralenantes.projettp;
+import java.util.Random;
 
 /**
  *
@@ -30,7 +31,15 @@ public class PotionSoin extends Objet {
     }
     
     public PotionSoin(){
-        super("Soin", new Point2D(0,0),0);
+        super("Soin", new Point2D(0,0),1);
         ptVie=1;
     }
+    
+    public void soigner (Creature c){
+        Random alea=new Random();
+        if (this.getPos()==c.getPos()){
+            c.setPtVie(c.getPtVie()+this.getPtVie());
+            this.setPtVie(0);
+            }
+        }
 }

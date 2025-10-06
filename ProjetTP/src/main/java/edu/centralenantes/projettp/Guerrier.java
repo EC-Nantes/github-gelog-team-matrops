@@ -18,19 +18,24 @@ public class Guerrier extends Personnage {
         super((Personnage)a);
     }
     public Guerrier(){
-        super(0,0,0,0,0, new Point2D(0,0), "Légolas", 0);
+        super(15,0,0,0,0, new Point2D(0,0), "Légolas", 0);
     }
     public void combattre (Creature c){
         Random alea=new Random();
         int na =alea.nextInt(100);
         int np =alea.nextInt(100);
-        if (na<=c.getPageAtt()){
-            if (np>=this.getPagePar()){
-                this.setPtVie(this.getPtVie()-c.getDegAtt());
+        if (this.getPos()==c.getPos()){
+            if (na<=this.getPageAtt()){
+                if (np>c.getPagePar()){
+                    c.setPtVie(c.getPtVie()-this.getDegAtt());
+                }
+                else {
+                    c.setPtVie(c.getPtVie()-this.getDegAtt()+c.getPtPar());
+                }
             }
         }
-        if (na<=this.getPageAtt()){
-            if (np>=c.getPagePar()){
+        if (this.getPos().distance(c.getPos())<this.getDistAttMax()){  
+            if (na<=this.getPageAtt()){
                 c.setPtVie(c.getPtVie()-this.getDegAtt());
             }
         }
