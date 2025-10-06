@@ -7,6 +7,10 @@
  * -------------------------------------------------------------------------------- */
 package fr.centrale.nantes.worldofecn;
 
+import fr.centrale.nantes.worldofecn.world.ElementDeJeu;
+import fr.centrale.nantes.worldofecn.world.Joueur;
+import fr.centrale.nantes.worldofecn.world.Point2D;
+import fr.centrale.nantes.worldofecn.world.Sauvegarde;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -18,6 +22,7 @@ import java.util.logging.Logger;
 import fr.centrale.nantes.worldofecn.world.World;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * Manage database connectio, saves and retreive informations
@@ -92,18 +97,20 @@ public class DatabaseTools {
      * @return
      */
     public Integer getPlayerID(String nomJoueur, String password) {
-        String query = "SELECT id FROM joueur WHERE mdp = ? AND nom = ?";
-        PreparedStatement stmt = connection.prepareStatement(query);
-        stmt.setString(1,password);
-        stmt.setString(2,nomJoueur);
-        ResultSet rs = stmt.executeQuery();
-        if (rs!=null){
-            if(rs.next()!=false){
-                return (rs.getInt("id"));
+        try{
+            String query = "SELECT id FROM joueur WHERE mdp = ? AND nom = ?";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1,password);
+            stmt.setString(2,nomJoueur);
+            ResultSet rs = stmt.executeQuery();
+            if (rs!=null){
+                if(rs.next()!=false){
+                    return (rs.getInt("id"));
+                }
             }
         }
         catch (SQLException ex) {
-                System.getLogger(DatabaseTools.class.getName()).log(System.Logger.Level.ERROR, (String) null ex);
+                Logger.getLogger(DatabaseTools.class.getName()).log(Level.SEVERE, null, ex);
                 }
         
         return null;
@@ -118,13 +125,13 @@ public class DatabaseTools {
      */
     public void saveWorld(Integer idJoueur, String nomPartie, String nomSauvegarde, World monde) {
         try{
-        String query = "SELECT id_partie FROM partie WHERE id=1";
-        PreparedStatement stmt = connection.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();
-        if (rs==null){
-            query = "INSERT INTO partie (id_partie, nom, id_joueur, dimension_x, dimension_y) values (1,'partie 1',1,100,100)";
-            PreparedStatement stmt2=connection.prepareStatement(query);
-            stmt2.executeUpdate();
+            String query = "SELECT id_partie FROM partie WHERE id=1";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            if (rs==null){
+                query = "INSERT INTO partie (id_partie, nom, id_joueur, dimension_x, dimension_y) values (1,'partie 1',1,100,100)";
+                PreparedStatement stmt2=connection.prepareStatement(query);
+                stmt2.executeUpdate();
         }
         
         query = "SELECT id_sauv FROM sauvegarde WHERE id=1";
@@ -137,21 +144,8 @@ public class DatabaseTools {
         }
         }
         catch (SQLException ex) {
-            System.getLogger(DatabaseTools.class.getName()).log(Level.SEVERE,null,ex); //Logger = fichier qui contient les erreurs : affiche la classe, le type d'erreur, et une explication 
+            Logger.getLogger(DatabaseTools.class.getName()).log(Level.SEVERE,null,ex); //Logger = fichier qui contient les erreurs : affiche la classe, le type d'erreur, et une explication 
         }
-        
-        
-        // TO BE DEFINED
-        
-        // Create a new "partie" in database if it does not exists and link it to the player
-        // Save partie's infos in the sauvegarde (height, width, ...) if necessary
-        
-        // Create a new sauvegarde if it does not exist for the partie
-        // Update sauvegarde infos for the partie
-        // Remove existing elements de jeu for the sauvegarde
-        // Save world's elementdejeu in database
-        
-        // Save player infos and the player's creature infos for this partie
         
     }
 
@@ -164,6 +158,8 @@ public class DatabaseTools {
      */
     public World readWorld(Integer idJoueur, String nomPartie, String nomSauvegarde) {
         World monde = new World();
+        Sauvegarde sauv = new Sauvegarde();
+        sauv.setNom("nomSauvegarde");
         // TO BE DEFINED
         
         // Retreive partie infos for the player
@@ -181,6 +177,7 @@ public class DatabaseTools {
         // Return created world
         return monde;
     }
+
 
 
     /**
