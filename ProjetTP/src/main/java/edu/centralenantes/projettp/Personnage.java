@@ -27,7 +27,7 @@ public class Personnage extends Creature {
         distAttMax=perso.distAttMax;
     }
     public Personnage(){
-        super(0,0,0,0,0, new Point2D(0,0));
+        super(3,1,1,1,1, new Point2D(0,0));
         nom="Frodon";
         distAttMax = 0;
     }

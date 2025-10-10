@@ -25,6 +25,8 @@ public class World {
     private PotionSoin Potion2;
     private PotionSoin Potion3;
     
+    
+    
     public World(){
         robin = new Archer();
         peon = new Paysan();

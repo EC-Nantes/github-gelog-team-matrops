@@ -20,7 +20,7 @@ public class Loup extends Monstre {
     }
     
     public Loup (){
-        super(10,3,0,4,0,new Point2D(0,0));
+        super(10,3,3,4,3,new Point2D(0,0));
     }
     
     public void combattre (Creature c){

@@ -5,6 +5,7 @@
 package edu.centralenantes.projettp;
 
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  *
@@ -22,7 +23,7 @@ public class Archer extends Personnage {
         nbFleches=a.nbFleches;
     }
     public Archer(){
-        super(10,0,0,0,0,new Point2D(0,0), "Légolas", 0);
+        super(10,3,4,3,3,new Point2D(0,0), "Archer", 0);
         nbFleches=0;
     }
     
@@ -45,5 +46,13 @@ public class Archer extends Personnage {
                 c.setPtVie(c.getPtVie()-this.getDegAtt());
             }
         }
+    }
+    
+    public void declaAge() throws NumberFormatException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Entrez l'âge de votre personnage (en nombre) : ");
+        String saisieAge = scanner.nextLine();
+        int age = Integer.parseInt(saisieAge);
+        System.out.println("L'archer a " + age + " ans !");
     }
 }

@@ -18,7 +18,7 @@ public class Guerrier extends Personnage {
         super((Personnage)a);
     }
     public Guerrier(){
-        super(15,0,0,0,0, new Point2D(0,0), "Légolas", 0);
+        super(15,4,4,4,4, new Point2D(0,0), "Guerrier", 1);
     }
     public void combattre (Creature c){
         Random alea=new Random();
