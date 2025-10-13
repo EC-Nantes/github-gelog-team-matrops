@@ -32,19 +32,28 @@ public class Archer extends Personnage {
         nbFleches = 0;
     }
 
+    /**
+     *
+     * @return nbFleches
+     */
     public int getNbFleches() {
         return nbFleches;
     }
 
     /**
-     * public void copieArcher(Archer p){ super = new Archer(); = p;
      * p.deplace();
     }
+     * @param nbFleches
      */
     public void setNbFleches(int nbFleches) {
         this.nbFleches = nbFleches;
     }
 
+    /**
+     * Attaquer une autre créature
+     * L'archer peut tirer à distance en fonction de son nombre de fléches
+     * @param c
+     */
     public void combattre(Creature c) {
         if (this.nbFleches != 0) {
             if (getPos() == c.getPos()) {
@@ -69,12 +78,12 @@ public class Archer extends Personnage {
                 Random aleaInt = new Random();
                 int na = aleaInt.nextInt(101);
                 if (na > getPageAtt()) {
-                    System.out.println("L'attaque a échoué");
+                    System.out.println("L'attaque de "+ getNom() +" a échoué");
                 } else {
                     int np = aleaInt.nextInt(101);
-                    System.out.println("L'attaque a réussi");
+                    System.out.println("L'attaque de " + getNom() + " a réussi");
                     if (np > getPagePar()) {
-                        System.out.println("La défense a réussi");
+                        System.out.println("La défense de a réussi");
                         c.setPtVie(c.getPtVie() - getDegAtt() + c.getPtPar());
                     } else {
                         System.out.println("La défense a échoué");
@@ -88,13 +97,15 @@ public class Archer extends Personnage {
         }
     }
     
-    
+    /**
+     *  Utilisation d'une potion de soin
+     * @param ptS PotionSoin
+     */
     public void soin(PotionSoin ptS){
         if (getPos()==ptS.getPos()){
-            setPtVie(getPtVie() + ptS.getSoin());
+            setPtVie(Math.max(100,getPtVie() + ptS.getSoin()));
             ptS.setSoin(0);
             ptS.setPos(null);
-            ptS.setNom(null);
             ptS.setDansInv(0);
             
         }
