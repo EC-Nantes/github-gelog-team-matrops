@@ -1,51 +1,50 @@
 package org.centrale.hceres.controller;
 
 //import org.centrale.hceres.items.RequestDDO;
-import org.centrale.hceres.items.ScientificExpertise;
+import org.centrale.hceres.items.Activity;
 import org.centrale.hceres.service.ScientificExpertiseService;
+import org.centrale.hceres.util.RequestParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(originPatterns = "*")
 public class ScientificExpertiseController {
 
     @Autowired
-    private ScientificExpertiseService ScientificExpertiseService;
+    private ScientificExpertiseService scientificExpertiseService;
 
-    @GetMapping("Api/ScientificExpertises")
-    public Iterable<ScientificExpertise> getScientificExpertises() {
-        return ScientificExpertiseService.getScientificExpertises();
+    /**
+     * return a list of activities of specified type only
+     */
+    @GetMapping(value = "/ScientificExpertises")
+    public List<Activity> getScientificExpertises() {
+        return scientificExpertiseService.getScientificExpertises();
     }
 
+    /**
+     * create an element in database
+     *
+     * @return Activity
+     */
+    @PostMapping(value = "/ScientificExpertise/Create")
+    public Activity createScientificExpertise(@RequestBody Map<String, Object> request) throws RequestParseException {
+        return scientificExpertiseService.saveScientificExpertise(request);
+    }
 
-    @GetMapping("Api/ScientificExpertises/{id}")
-    public ScientificExpertise getScientificExpertise(@PathVariable("id") final Integer id) {
-        Optional<ScientificExpertise> ScientificExpertise = ScientificExpertiseService.getScientificExpertise(id);
-        if(ScientificExpertise.isPresent()) {
-            return ScientificExpertise.get();
-        } else {
-            return null;
-        }
-    }
-    
-    @PostMapping(value ="Api/AddScientificExpertise")
-    public ScientificExpertise createScientificExpertise(@RequestBody Map<String, Object> request) {
-        return ScientificExpertiseService.saveScientificExpertise(request);
-    }
-	
-	/*
-	@PostMapping("/AddScientificExpertise")
-    public RequestDDO createScientificExpertise(@RequestBody RequestDDO request) {
-        return request ;
-    }
-*/
-    @DeleteMapping("Api/DeletScientificExpertise/{id}")
-    public void deleteScientificExpertise(@PathVariable("id") final Integer id) {
-        ScientificExpertiseService.deleteScientificExpertise(id);
+    /**
+     * Delete - Delete an element
+     *
+     * @param id - The id of the element
+     */
+    @DeleteMapping("/ScientificExpertise/Delete/{id}")
+
+    public void deleteScientificExpertise(@RequestBody @PathVariable("id") final Integer id) {
+        scientificExpertiseService.deleteScientificExpertise(id);
     }
 
 }

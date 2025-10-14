@@ -2,103 +2,80 @@ package org.centrale.hceres.service;
 
 import org.centrale.hceres.items.*;
 import org.centrale.hceres.repository.*;
+import org.centrale.hceres.util.RequestParseException;
+import org.centrale.hceres.util.RequestParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
 @Service
 public class ReviewService {
     @Autowired
-    private ReviewingJournalArticlesRepository reviewingJournalArticlesRepository;
+    private ReviewArticleRepository ReviewArticleRepository;
     @Autowired
-    private ResearchRepository researchRepo;
+    private ResearcherRepository researchRepo;
     @Autowired
     private ActivityRepository activityRepo;
     @Autowired
-    private TypeActivityRepository typeActivityLevelRepo;
-    @Autowired
     private JournalRepository journalRepository;
 
-
-    public Iterable<ReviewingJournalArticles> getReviews(){
-        return reviewingJournalArticlesRepository.findAll();
+    /**
+     * permet de retourner la liste
+     */
+    public List<Activity> getReviewArticle() {
+        return activityRepo.findByIdTypeActivity(TypeActivityId.REVIEWING_JOURNAL_ARTICLES.getId());
     }
 
-
-    public Optional<ReviewingJournalArticles> getReview(final Integer id) {
-        return reviewingJournalArticlesRepository.findById(id);
+    /**
+     * supprimer l'elmt selon son id
+     *
+     * @param id : id de l'elmt
+     */
+    public void deleteReviewArticle(final Integer id) {
+        ReviewArticleRepository.deleteById(id);
     }
 
+    @Transactional
+    public Activity saveReviewArticle(@RequestBody Map<String, Object> request) throws RequestParseException {
 
-    public void deleteReviewById(final Integer id) {
-        reviewingJournalArticlesRepository.deleteById(id);
-    }
-
-    public ReviewingJournalArticles saveReview(@RequestBody Map<String, Object> request) {
-
-        ReviewingJournalArticles reviewToSave = new ReviewingJournalArticles();
+        ReviewArticle reviewArticle = new ReviewArticle();
 
         // Year
-        Integer year = Integer.parseInt((String)request.get("year"));
-        reviewToSave.setYear(year);
+        reviewArticle.setYear(RequestParser.getAsInteger(request.get("year")));
 
         // nb_reviewed_articles
-        Integer nbReviewedArticles = Integer.parseInt((String)request.get("nbReviewedArticles"));
-        reviewToSave.setNbReviewedArticles(nbReviewedArticles);
+        reviewArticle.setNbReviewedArticles(RequestParser.getAsInteger(request.get("nbReviewedArticles")));
 
         // impact_factor
+        reviewArticle.setImpactFactor(new BigDecimal(RequestParser.getAsString(request.get("impactFactor"))));
 
-        BigDecimal impactFactor = new BigDecimal((String)request.get("impactFactor"));
-        reviewToSave.setImpactFactor(impactFactor);
+        // Creating journal object with given name in form (must include in future the possibility to select among the existing journals)
+        String journalName = RequestParser.getAsString(request.get("journalName"));
+
+        Journal journal = journalRepository.findByName(journalName);
+        if (journal == null) {
+            journal = new Journal();
+            journal.setJournalName(journalName);
+            journal = journalRepository.save(journal);
+            journalRepository.flush();
+        }
+        reviewArticle.setJournalId(journal.getJournalId());
+        reviewArticle.setJournal(journal);
 
         // Activity :
         Activity activity = new Activity();
-        TypeActivity typeActivity = typeActivityLevelRepo.getById(23);
-        activity.setIdTypeActivity(typeActivity);
+        reviewArticle.setActivity(activity);
+        activity.setReviewArticle(reviewArticle);
+        activity.setIdTypeActivity(TypeActivityId.REVIEWING_JOURNAL_ARTICLES.getId());
 
-        // Add this activity to the researcher activity list :
-        String researcherIdStr = (String)request.get("researcherId");
-        int researcherId = -1;
-        researcherId = Integer.parseInt(researcherIdStr);
-        Optional<Researcher> researcherOp = researchRepo.findById(researcherId);
-        Researcher researcher = researcherOp.get();
-        Collection<Activity> activityCollection = researcher.getActivityCollection();
-        activityCollection.add(activity);
-        researcher.setActivityCollection(activityCollection);
+        // get list of researcher doing this activity - currently only one is sent
+        activity.setResearcherList(Collections.singletonList(new Researcher(RequestParser.getAsInteger(request.get("researcherId")))));
 
-        // Add this activity to the reasearcher :
-        Collection<Researcher> activityResearch = activity.getResearcherCollection();
-        if (activityResearch == null) {
-            activityResearch = new ArrayList<Researcher>();
-        }
-        activityResearch.add(researcher);
-        activity.setResearcherCollection(activityResearch);
-
-        Activity savedActivity = activityRepo.save(activity);
-        reviewToSave.setActivity(savedActivity);
-
-        // Created Editorial id :
-        Integer idReview = activity.getIdActivity();
-        reviewToSave.setIdActivity(idReview);
-
-        // Creating journal object with given name in form (must include in future the possibility to select among the existing journals)
-        String journalName = (String)request.get("journalName") ;
-
-        if (journalRepository.findByName(journalName)==null){
-            Journal journal = new Journal();
-            journal.setJournalName(journalName);
-            reviewToSave.setJournalId(journal);
-        }
-        else {
-            Journal journal = journalRepository.findByName(journalName);
-            reviewToSave.setJournalId(journal);
-        }
-
-        // Persist Platform to database :
-        ReviewingJournalArticles saveReview = reviewingJournalArticlesRepository.save(reviewToSave);
-        return saveReview;
+        activity = activityRepo.save(activity);
+        return activity;
     }
 }

@@ -1,38 +1,50 @@
 package org.centrale.hceres.controller;
-import org.centrale.hceres.items.ReviewingJournalArticles;
+import org.centrale.hceres.items.Activity;
+import org.centrale.hceres.items.ReviewArticle;
 import org.centrale.hceres.service.ReviewService;
+import org.centrale.hceres.util.RequestParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(originPatterns = "*")
 public class ReviewController {
 
     @Autowired
     ReviewService reviewService;
 
 
-    @GetMapping("Api/Reviews")
-    public Iterable<ReviewingJournalArticles> getReviews() {
-        return reviewService.getReviews();
+
+    /**
+     * return a list of activities of specified type only
+     */
+    @GetMapping(value = "/ReviewArticles")
+    public List<Activity> getReviewArticle() {
+        return reviewService.getReviewArticle();
     }
 
-
-    @GetMapping("Api/Review/{id}")
-    public ReviewingJournalArticles getReview(@PathVariable("id") final Integer id) {
-        Optional<ReviewingJournalArticles> review = reviewService.getReview(id);
-        if(review.isPresent()) {
-            return review.get();
-        } else {
-            return null;
-        }
+    /**
+     * create an element in database
+     *
+     * @return Activity
+     */
+    @PostMapping(value = "/ReviewArticle/Create")
+    public Activity createReviewArticle(@RequestBody Map<String, Object> request) throws RequestParseException {
+        return reviewService.saveReviewArticle(request);
     }
 
-    @PostMapping(value = "Api/AddReview")
-    public ReviewingJournalArticles createReview(@RequestBody Map<String, Object> request) {
-        return reviewService.saveReview(request);
+    /**
+     * Delete - Delete an element
+     *
+     * @param id - The id of the element
+     */
+    @DeleteMapping("/ReviewArticle/Delete/{id}")
+
+    public void deleteReviewArticle(@RequestBody @PathVariable("id") final Integer id) {
+        reviewService.deleteReviewArticle(id);
     }
 }
