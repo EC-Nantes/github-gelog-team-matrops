@@ -8,7 +8,6 @@ import fr.centrale.nantes.worldofecn.world.World;
 
 /**
  *
-<<<<<<< HEAD
  * @author selli
  */
 public class TestData {
@@ -17,7 +16,7 @@ public class TestData {
         //Initialisation de la base
         DatabaseTools base = new DatabaseTools();
         base.connect();
-        String tx = base.getPlayerID("Admin","admin");
+        Integer tx = base.getPlayerID("Admin","admin");
         if (tx != null) {
                 System.out.println("ID du joueur Admin : " + tx);
             } else {
@@ -29,9 +28,9 @@ public class TestData {
         monde.generate();
         
         //Test de saveWorld
-        base.removeWorld(tx, tx, tx);
-        int s = base.saveWorld(tx, "monde1", "Sauvegarde1", monde);
-        System.out.println("L'identifiant de la sauvegarde est "+s+".");
+        base.removeWorld(tx, "bla", "bla");
+        base.saveWorld(tx, "monde1", "Sauvegarde1", monde);
+        System.out.println("L'identifiant de la sauvegarde est .");//TOBEFIXED?
         
         //Test de readWorld
         base.readWorld(tx,"monde1","Sauvegarde1");

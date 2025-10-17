@@ -35,7 +35,7 @@ public class WorldOfECN {
 
         // Save world
         database.connect();
-        String playerId = database.getPlayerID("Saegusa", "Mayumi");
+        Integer playerId = database.getPlayerID("Saegusa", "Mayumi");
         database.saveWorld(playerId, "Test Game 1", "Start", world1);
         
         // Retreive World
