@@ -200,7 +200,7 @@ public class World {
     /**
      * Generate elements randomly
      */
-    private void generate() {
+    public void generate() {
         Random rand = new Random();
 
         generatePlayer(1);
