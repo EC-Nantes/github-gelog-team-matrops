@@ -8,6 +8,7 @@
  * L LETERTRE, S LIMOUX, JY MARTIN
  * -------------------------------------------------------------------------------- */
 package org.centrale.hceres.items;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 //import org.centrale.tools.Utilities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author kwyhr
@@ -52,29 +54,29 @@ public class Researcher implements Serializable {
     @Basic(optional = false)
     @Column(name = "researcher_id")
     private Integer researcherId;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 256)
     @Column(name = "researcher_surname")
     private String researcherSurname;
-    
+
     @Size(max = 256)
     @Column(name = "researcher_name")
     private String researcherName;
-    
+
     @Size(max = 256)
     @Column(name = "researcher_email")
     private String researcherEmail;
-    
+
     @Size(max = 256)
     @Column(name = "researcher_orcid")
     private String researcherOrcid;
-    
+
     @Size(max = 256)
     @Column(name = "researcher_login")
     private String researcherLogin;
-    
+
     @Size(max = 1024)
     @Column(name = "researcher_password")
     private String researcherPassword;
@@ -431,22 +433,23 @@ public class Researcher implements Serializable {
      *
      * @return
      */
-//    public Contract getCurrentContract() {
-//        if (this.contractCollection == null) {
-//            return null;
-//        } else {
-//            Date now = Utilities.getCurrentDate();
-//            for (Contract temp : this.contractCollection) {
-//                Date start = temp.getStartContract();
-//                Date end = temp.getEndContract();
-//                if (((start == null) || (start.before(now))) && ((end == null) || (end.after(now)))) {
-//                    return temp;
-//                }
-//            }
-//            return null;
-//        }
+    /**
+    public Contract getCurrentContract() {
+        if (this.contractCollection == null) {
+            return null;
+        } else {
+            Date now = Utilities.getCurrentDate();
+            for (Contract temp : this.contractCollection) {
+                Date start = temp.getStartContract();
+                Date end = temp.getEndContract();
+                if (((start == null) || (start.before(now))) && ((end == null) || (end.after(now)))) {
+                    return temp;
+                }
+            }
+            return null;
+        }
     }
-
+    * */
     /**
      * Get Current team
      *
@@ -467,7 +470,6 @@ public class Researcher implements Serializable {
 //            return null;
 //        }
 //    }
-
     /**
      * Get Current laboratory
      *
@@ -481,3 +483,4 @@ public class Researcher implements Serializable {
 //        return null;
 //    }
 
+}
