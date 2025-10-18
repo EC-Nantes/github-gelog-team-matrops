@@ -9,6 +9,7 @@
  * -------------------------------------------------------------------------------- */
 package org.centrale.hceres.items;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,8 +39,10 @@ public class Admin implements Serializable {
     @NotNull
     @Column(name = "researcher_id")
     private Integer researcherId;
-    @JoinColumn(name = "researcher_id", referencedColumnName = "researcher_id", insertable = false, updatable = false)
+    
     @OneToOne(optional = false)
+    @JoinColumn(name = "researcher_id", referencedColumnName = "researcher_id", insertable = false, updatable = false)
+    @JsonBackReference
     private Researcher researcher;
 
     /**
