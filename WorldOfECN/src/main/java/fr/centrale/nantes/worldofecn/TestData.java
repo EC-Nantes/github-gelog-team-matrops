@@ -4,6 +4,8 @@
  */
 package fr.centrale.nantes.worldofecn;
 
+import fr.centrale.nantes.worldofecn.world.World;
+
 /**
  *
  * @author Max
@@ -11,8 +13,14 @@ package fr.centrale.nantes.worldofecn;
 public class TestData {
     public static void main(String[] args){
         DatabaseTools base = new DatabaseTools();
+        World monde = new World();
+        
         base.connect();
-        int tx = base.getPlayerID("Admin","admin");
+        base.saveWorld(-1, "Test 1", "Sauvegarde 2", monde);
+        int tx = base.getPlayerID("admin","admin");
+        monde = base.readWorld(tx, "Test 1", "1");
+        //monde.affiche();
+        //base.removeWorld(tx, "Test 1", "Sauvegarde 2");
         base.disconnect();
         System.out.println(tx);
     }

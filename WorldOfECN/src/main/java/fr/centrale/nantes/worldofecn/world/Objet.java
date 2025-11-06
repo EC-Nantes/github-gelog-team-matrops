@@ -7,9 +7,15 @@
  * -------------------------------------------------------------------------------- */
 package fr.centrale.nantes.worldofecn.world;
 
+import fr.centrale.nantes.worldofecn.DatabaseTools;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,7 +36,6 @@ public class Objet extends ElementDeJeu {
     private String type;
 
     private static List<String> typesList;
-
     /**
      *
      */
@@ -52,6 +57,7 @@ public class Objet extends ElementDeJeu {
      * @return
      */
     public static int getNbTypes() {
+        init();
         if (typesList != null) {
             return typesList.size();
         }
@@ -64,6 +70,7 @@ public class Objet extends ElementDeJeu {
      * @return
      */
     public static String intToType(int type) {
+        init();
         if (type < typesList.size()) {
             return typesList.get(type);
         }
@@ -111,7 +118,24 @@ public class Objet extends ElementDeJeu {
     @Override
     public Integer saveToDatabase(Connection connection) {
         Integer id = -1;
+        try{
+            String query = "Insert into objet(type,x,y) Values(?,?,?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setString(1,this.getType());
+            stmt.setInt(2, this.getPosition().getX());
+            stmt.setInt(3, this.getPosition().getY());
+            stmt.executeUpdate();
+            query = "Select id_objet_fixe from objet order by id_objet_fixe DESC Limit 1";
+            stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            int idsauv = rs.getInt("id_objet_fixe");
 
+            
+            return idsauv;
+        }catch (SQLException ex) {
+                Logger.getLogger(DatabaseTools.class.getName()).log(Level.SEVERE, null, ex);
+            }
         return id;
     }
 

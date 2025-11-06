@@ -90,7 +90,7 @@ public class Researcher implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "researcherId")
     private Collection<Connection> connectionCollection;
-    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "researcherId")
     private Collection<Contract> contractCollection;
     @JsonIgnore
@@ -105,7 +105,7 @@ public class Researcher implements Serializable {
     @JsonManagedReference
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "researcher")
     private Admin admin;
-    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "researcherId")
     private Collection<BelongsTeam> belongsTeamCollection;
 

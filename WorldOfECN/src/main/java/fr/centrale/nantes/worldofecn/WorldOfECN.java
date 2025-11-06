@@ -28,14 +28,14 @@ public class WorldOfECN {
         
         // Generate random world
         World world1 = new World();
-        world1.setPlayer("Saegusa");
+        world1.setPlayer("admin");
         
         // Test phase
         DatabaseTools database = new DatabaseTools();
 
         // Save world
         database.connect();
-        Integer playerId = database.getPlayerID("Saegusa", "Mayumi");
+        Integer playerId = database.getPlayerID("admin", "admin");
         database.saveWorld(playerId, "Test Game 1", "Start", world1);
         
         // Retreive World

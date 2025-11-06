@@ -7,9 +7,16 @@
  * -------------------------------------------------------------------------------- */
 package fr.centrale.nantes.worldofecn.world;
 
+import fr.centrale.nantes.worldofecn.DatabaseTools;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,22 +24,22 @@ import java.util.List;
  */
 public class Personnage extends Creature {
 
-private static final String RACEHUMAIN = "Humain";
-private static final String RACENAIN = "Nain";
-private static final String RACEELFE = "Elfe";
-private static final String RACEGOBELIN = "Gobelin";
-private static final String RACETROLL = "Troll";
+    private static final String RACEHUMAIN = "Humain";
+    private static final String RACENAIN = "Nain";
+    private static final String RACEELFE = "Elfe";
+    private static final String RACEGOBELIN = "Gobelin";
+    private static final String RACETROLL = "Troll";
 
-private static final String METIERGUERRIER = "Guerrier";
-private static final String METIERARCHER = "Archer";
-private static final String METIERARBALETRIER = "Arbaletrier";
-private static final String METIERMAGE = "Mage";
-private static final String METIERPRETRE = "Pretre";
-private static final String METIERPALADIN = "Paladin";
-private static final String METIERVOLEUR = "Voleur";
-private static final String METIERPAYSAN = "Paysan";
+    private static final String METIERGUERRIER = "Guerrier";
+    private static final String METIERARCHER = "Archer";
+    private static final String METIERARBALETRIER = "Arbaletrier";
+    private static final String METIERMAGE = "Mage";
+    private static final String METIERPRETRE = "Pretre";
+    private static final String METIERPALADIN = "Paladin";
+    private static final String METIERVOLEUR = "Voleur";
+    private static final String METIERPAYSAN = "Paysan";
 
-private String race;
+    private String race;
     private String metier;
 
     private float pourcentParade;
@@ -67,23 +74,25 @@ private String race;
         metiersList.add(METIERVOLEUR);
         metiersList.add(METIERPAYSAN);
     }
-    
+
     /**
      *
      * @return
      */
     public static int getNbRaces() {
+        init();
         if (racesList != null) {
             return racesList.size();
         }
         return 0;
     }
-    
+
     /**
      *
      * @return
      */
     public static int getNbMetiers() {
+        init();
         if (metiersList != null) {
             return metiersList.size();
         }
@@ -96,18 +105,20 @@ private String race;
      * @return
      */
     public static String intToRace(int race) {
+        init();
         if (race < racesList.size()) {
             return racesList.get(race);
         }
         return "";
     }
-    
+
     /**
      *
      * @param metier
      * @return
      */
     public static String intToMetier(int metier) {
+        init();
         if (metier < metiersList.size()) {
             return metiersList.get(metier);
         }
@@ -123,6 +134,17 @@ private String race;
         this.race = UNDEFINED;
         this.metier = UNDEFINED;
         this.nbFleches = 0;
+    }
+
+    public void init(String race, String metier, float pourcentParade, float valeurParade, float pMagieMax, float pMagie, float portee, int nbFleches) {
+        this.race = race;
+        this.metier = metier;
+        this.pourcentParade = pourcentParade;
+        this.valeurParade = valeurParade;
+        this.pMagieMax = pMagieMax;
+        this.pMagie = pMagie;
+        this.portee = portee;
+        this.nbFleches = nbFleches;
     }
 
     /**
@@ -319,10 +341,10 @@ private String race;
                 break;
         }
     }
-    
+
     private void setRaceCaracteristiques() {
         switch (this.getRace()) {
-            case RACEHUMAIN :
+            case RACEHUMAIN:
                 this.setPourcentAttaque(30.0f);
                 this.setDegatsAttaque(2.0f);
                 this.setPourcentParade(10.0f);
@@ -333,7 +355,7 @@ private String race;
                 this.setPMagieMax(20.0f);
                 this.setPortee(1.0f);
                 break;
-            case RACENAIN :
+            case RACENAIN:
                 this.setPourcentAttaque(40.0f);
                 this.setDegatsAttaque(3.0f);
                 this.setPourcentParade(10.0f);
@@ -344,7 +366,7 @@ private String race;
                 this.setPMagieMax(10.0f);
                 this.setPortee(1.0f);
                 break;
-            case RACEELFE :
+            case RACEELFE:
                 this.setPourcentAttaque(25.0f);
                 this.setDegatsAttaque(2.0f);
                 this.setPourcentParade(15.0f);
@@ -355,7 +377,7 @@ private String race;
                 this.setPMagieMax(30.0f);
                 this.setPortee(1.0f);
                 break;
-            case RACEGOBELIN :
+            case RACEGOBELIN:
                 this.setPourcentAttaque(30.0f);
                 this.setDegatsAttaque(2.0f);
                 this.setPourcentParade(10.0f);
@@ -366,7 +388,7 @@ private String race;
                 this.setPMagieMax(10.0f);
                 this.setPortee(1.0f);
                 break;
-            case RACETROLL :
+            case RACETROLL:
                 this.setPourcentAttaque(40.0f);
                 this.setDegatsAttaque(4.0f);
                 this.setPourcentParade(0.0f);
@@ -377,7 +399,7 @@ private String race;
                 this.setPMagieMax(0.0f);
                 this.setPortee(1.0f);
                 break;
-            default : // UNDEFINED
+            default: // UNDEFINED
                 this.setPourcentAttaque(0.0f);
                 this.setDegatsAttaque(0.0f);
                 this.setPourcentParade(0.0f);
@@ -395,30 +417,30 @@ private String race;
 
     private void addMetierCaracteristiques() {
         switch (this.getMetier()) {
-            case METIERGUERRIER :
+            case METIERGUERRIER:
                 this.setPourcentAttaque(this.getPourcentAttaque() + 10.0f);
                 this.setDegatsAttaque(this.getDegatsAttaque() + 2.0f);
                 this.setPourcentParade(this.getPourcentParade() + 20.0f);
                 this.setValeurParade(this.getValeurParade() + 5.0f);
                 this.setPVieMax(this.getPVieMax() + 5.0f);
                 break;
-            case METIERARCHER :
+            case METIERARCHER:
                 this.setPourcentAttaque(this.getPourcentAttaque() + 10.0f);
                 this.setDegatsAttaque(this.getDegatsAttaque() + 1.0f);
                 this.setPortee(3.0f);
                 break;
-            case METIERARBALETRIER :
+            case METIERARBALETRIER:
                 this.setPourcentAttaque(this.getPourcentAttaque() + 10.0f);
                 this.setDegatsAttaque(this.getDegatsAttaque() + 3.0f);
                 this.setPortee(3.0f);
                 break;
-            case METIERMAGE :
+            case METIERMAGE:
                 this.setPortee(4.0f);
                 break;
-            case METIERPRETRE :
+            case METIERPRETRE:
                 this.setPortee(3.0f);
                 break;
-            case METIERPALADIN :
+            case METIERPALADIN:
                 this.setPourcentAttaque(this.getPourcentAttaque() + 5.0f);
                 this.setDegatsAttaque(this.getDegatsAttaque() + 2.0f);
                 this.setPourcentParade(this.getPourcentParade() + 20.0f);
@@ -426,16 +448,16 @@ private String race;
                 this.setPVieMax(this.getPVieMax() + 5.0f);
                 this.setPortee(2.5f);
                 break;
-            case METIERVOLEUR :
+            case METIERVOLEUR:
                 this.setPourcentAttaque(this.getPourcentAttaque() + 15.0f);
                 this.setDegatsAttaque(this.getDegatsAttaque() + 1.0f);
                 this.setPVieMax(this.getPVieMax() + 5.0f);
                 break;
-            case METIERPAYSAN :
-                this.setAbsorbe(this.getAbsorbe()+ 5.0f);
+            case METIERPAYSAN:
+                this.setAbsorbe(this.getAbsorbe() + 5.0f);
                 this.setPVieMax(this.getPVieMax() + 5.0f);
                 break;
-            default : // UNDEFINED
+            default: // UNDEFINED
                 break;
         }
         this.setPVie(this.getPVieMax());
@@ -445,7 +467,49 @@ private String race;
     @Override
     public Integer saveToDatabase(Connection connection) {
         Integer id = -1;
+        try {
+            if (race != null) {
+                String query = "Insert into creature(pageatt,race,dmax,x,y,ptvie) Values(?,?,?,?,?,?)";
+                PreparedStatement stmt = connection.prepareStatement(query);
+                stmt.setFloat(1, this.getPourcentAttaque());
+                stmt.setString(2, this.race);
+                stmt.setFloat(3, this.getPortee());
+                stmt.setInt(4, this.getPosition().getX());
+                stmt.setInt(5, this.getPosition().getY());
+                stmt.setFloat(6, this.getPVie());
+                stmt.executeUpdate();
 
+                query = "Select id_creature from creature order by id_creature DESC Limit 1";
+                stmt = connection.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                int idcreature = rs.getInt("id_creature");
+
+                query = "Insert into humanoide(nom,metier,ptmagmax,ptmag,degats_max,nbpar,ppar,id_creature) Values(?,?,?,?,?,?,?,?)";
+                stmt = connection.prepareStatement(query);
+                stmt.setString(1, this.race);
+                stmt.setString(2, this.metier);
+                stmt.setFloat(3, this.getPMagieMax());
+                stmt.setFloat(4, this.getPMagie());
+                stmt.setFloat(5, this.getDegatsAttaque());
+                stmt.setFloat(6, this.getValeurParade());
+                stmt.setFloat(7, this.getPourcentParade());
+                stmt.setInt(8, idcreature);
+                stmt.executeUpdate();
+
+                if (metier.equals("Archer")) {
+                    query = "Insert into archer(id_creature,nbfleches) Values(?,?)";
+                    stmt = connection.prepareStatement(query);
+                    stmt.setInt(1, idcreature);
+                    stmt.setInt(2, this.getNbFleches());
+                    stmt.executeUpdate();
+                }
+                return idcreature;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseTools.class.getName()).log(Level.SEVERE, null, ex);
+            return id;
+        }
         return id;
     }
 
@@ -454,7 +518,50 @@ private String race;
     }
 
     @Override
-    public void removeFromDatabase(Connection connection, Integer id) {
+    public void removeFromDatabase(Connection connection, Integer id
+    ) {
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Personnage other = (Personnage) obj;
+        if (Float.floatToIntBits(this.pourcentParade) != Float.floatToIntBits(other.pourcentParade)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.valeurParade) != Float.floatToIntBits(other.valeurParade)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.pMagieMax) != Float.floatToIntBits(other.pMagieMax)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.pMagie) != Float.floatToIntBits(other.pMagie)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.portee) != Float.floatToIntBits(other.portee)) {
+            return false;
+        }
+        if (this.nbFleches != other.nbFleches) {
+            return false;
+        }
+        if (!Objects.equals(this.race, other.race)) {
+            return false;
+        }
+        return Objects.equals(this.metier, other.metier);
     }
 
 }

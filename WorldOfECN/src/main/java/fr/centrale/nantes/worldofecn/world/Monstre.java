@@ -8,9 +8,15 @@
 
 package fr.centrale.nantes.worldofecn.world;
 
+import fr.centrale.nantes.worldofecn.DatabaseTools;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -47,6 +53,7 @@ public class Monstre extends Creature {
      * @return
      */
     public static int getNbRaces() {
+        init();
         if (racesList != null) {
             return racesList.size();
         }
@@ -59,6 +66,7 @@ public class Monstre extends Creature {
      * @return
      */
     public static String intToRace(int race) {
+        init();
         if (race < racesList.size()) {
             return racesList.get(race);
         }
@@ -151,7 +159,27 @@ public class Monstre extends Creature {
     @Override
     public Integer saveToDatabase(Connection connection) {
         Integer id = -1;
-
+        try{
+            if (race != null){
+        String query = "Insert into creature(pageatt,race,dmax,x,y,ptvie) Values(?,?,?,?,?,?)";
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setFloat(1,this.getPourcentAttaque());
+            stmt.setString(2,this.race);
+            stmt.setFloat(3, this.getDegatsAttaque());
+            stmt.setInt(4, this.getPosition().getX());
+            stmt.setInt(5, this.getPosition().getY());
+            stmt.setFloat(6, this.getPVie());
+            stmt.executeUpdate();
+            
+            query = "Select id_creature from creature order by id_creature DESC Limit 1";
+            stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt("id_creature");
+            }
+        }catch (SQLException ex) {
+                Logger.getLogger(DatabaseTools.class.getName()).log(Level.SEVERE, null, ex);
+            }
         return id;
     }
 
@@ -162,5 +190,11 @@ public class Monstre extends Creature {
     @Override
     public void removeFromDatabase(Connection connection, Integer id) {
     }
+
+    public List<String> getRacesList() {
+        init();
+        return racesList;
+    }
+    
     
 }

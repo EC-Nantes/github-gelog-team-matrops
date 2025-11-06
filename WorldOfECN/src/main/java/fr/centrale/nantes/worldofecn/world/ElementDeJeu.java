@@ -56,6 +56,10 @@ public abstract class ElementDeJeu {
     public void setPosition(Point2D position) {
         this.position = position;
     }
+    public void setPosition(int x, int y){
+        this.position.setX(x);
+        this.position.setY(y);
+    }
     
     /**
      * Save element to database
