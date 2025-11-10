@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import lombok.Data;
+import org.centrale.hceres.items.Researcher;
 
 // permet de traiter la requete HTTP puis l'associer a la fonction de repository qui va donner une reponse
 @Data
@@ -41,12 +42,16 @@ public class TeamService {
 
         Team team = new Team();
         team.setTeamName(RequestParser.getAsString(request.get("teamName")));
-        team.setTeamCreation(RequestParser.getAsDate(request.get("teamCreation")));
-        team.setTeamEnd(RequestParser.getAsDate(request.get("teamEnd")));
-        team.setTeamLastReport(RequestParser.getAsDate(request.get("teamLastReport")));
-        team.setLaboratoryId(RequestParser.getAsInteger(request.get("laboratoryId")));
+        team.setTeamCreation(RequestParser.getAsDate(request.get("teamCreationDate")));
+        
+        team.setLaboratoryId(RequestParser.getAsInteger(request.get("teamLaboratoryId")));
+        
         teamRepo.save(team);
         return team;
+    }
+    
+    public List<Researcher> getTeamMembers(final Integer id){
+        return teamRepo.findResearchersByTeamId(id);
     }
 
 }

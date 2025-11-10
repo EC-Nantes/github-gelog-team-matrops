@@ -68,7 +68,8 @@ public class Publication implements Serializable {
     @Column(name = "publication_type_id")
     private Integer publicationTypeId;
 
-    @JsonIgnore
+    
+    //@JsonIgnore
     @JoinColumn(name = "publication_type_id", referencedColumnName = "publication_type_id", insertable = false, updatable = false)
     @ManyToOne
     private PublicationType publicationType;

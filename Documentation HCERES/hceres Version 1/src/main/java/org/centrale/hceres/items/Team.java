@@ -43,7 +43,6 @@ public class Team implements Serializable {
         this.teamId = teamId;
     }
     public Team(){
-        this.teamId = 0;
     }
 
     @Size(max = 256)

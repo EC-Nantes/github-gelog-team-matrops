@@ -70,8 +70,10 @@ public class Activity implements Serializable {
     private List<MailActivity> mailActivityList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     private InternationalCollaboration internationalCollaboration;
+    
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     private Publication publication;
+    
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     private ScientificExpertise scientificExpertise;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
@@ -103,8 +105,9 @@ public class Activity implements Serializable {
     private Patent patent;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
-    @JsonIgnore
+    //@JsonIgnore
     private Book book;
+    
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     @JsonIgnore

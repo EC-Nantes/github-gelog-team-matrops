@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import org.centrale.hceres.items.Researcher;
 
 @RestController
 @CrossOrigin(originPatterns = "*")
@@ -38,4 +39,10 @@ public class TeamController {
     public void deleteTeam(@RequestBody @PathVariable("id") final Integer id) {
         teamService.deleteTeam(id);
     }
+    
+    @GetMapping("/Team/{id}/Members")
+    public List<Researcher> getTeamMembers(@RequestBody @PathVariable("id") final Integer id){
+        return teamService.getTeamMembers(id);
+    }
+    
 }

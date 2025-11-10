@@ -58,6 +58,18 @@ public class Laboratory implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "laboratory")
     private List<Team> teamList;
 
+    public Laboratory() {
+    }
+
+    public Laboratory(Integer laboratoryId, String laboratoryName, String laboratoryAcronym, Integer institutionId, Institution institution, List<Team> teamList) {
+        this.laboratoryId = laboratoryId;
+        this.laboratoryName = laboratoryName;
+        this.laboratoryAcronym = laboratoryAcronym;
+        this.institutionId = institutionId;
+        this.institution = institution;
+        this.teamList = teamList;
+    }
+
     public Integer getLaboratoryId() {
         return laboratoryId;
     }

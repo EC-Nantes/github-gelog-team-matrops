@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import lombok.Data;
+import org.centrale.hceres.repository.PublicationRepository;
 
 // permet de traiter la requete HTTP puis l'associer a la fonction de repository qui va donner une reponse
 @Data
 @Service
 public class PublicationService {
 
-
+    @Autowired
+    private PublicationRepository publicationRepo;
+    
     @Autowired
     private ActivityRepository activityRepo;
 
@@ -35,7 +38,7 @@ public class PublicationService {
      * @param id : id de l'elmt
      */
     public void deletePublication(final Integer id) {
-        activityRepo.deleteById(id);
+        publicationRepo.deleteById(id);
     }
 
     /**
@@ -46,12 +49,13 @@ public class PublicationService {
     public Activity savePublication(@RequestBody Map<String, Object> request) throws RequestParseException {
 
         Publication publication = new Publication();
-        publication.setTitle(RequestParser.getAsString(request.get("title")));
-        publication.setAuthors(RequestParser.getAsString(request.get("authors")));
-        publication.setSource(RequestParser.getAsString(request.get("source")));
+        publication.setTitle(RequestParser.getAsString(request.get("publicationTitle")));
+        publication.setAuthors(RequestParser.getAsString(request.get("publicationAuthors")));
+        publication.setSource(RequestParser.getAsString(request.get("publicationSource")));
         publication.setPublicationDate(RequestParser.getAsDate(request.get("publicationDate")));
-        publication.setPmid(RequestParser.getAsString(request.get("pmid")));
-        publication.setImpactFactor(RequestParser.getAsBigDecimal(request.get("impactFactor")));
+        publication.setPmid(RequestParser.getAsString(request.get("publicationPmid")));
+        publication.setImpactFactor(RequestParser.getAsBigDecimal(request.get("publicationImpactFactor")));
+        publication.setPublicationTypeId(RequestParser.getAsInteger(request.get("publicationTypeId")));
 
         // Activity :
         Activity activity = new Activity();
