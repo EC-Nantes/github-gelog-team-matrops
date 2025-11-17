@@ -43,7 +43,7 @@ public class TeamService {
         Team team = new Team();
         team.setTeamName(RequestParser.getAsString(request.get("teamName")));
         team.setTeamCreation(RequestParser.getAsDate(request.get("teamCreationDate")));
-        
+        team.setTeamEnd(RequestParser.getAsDate(request.get("teamEndDate")));
         team.setLaboratoryId(RequestParser.getAsInteger(request.get("teamLaboratoryId")));
         
         teamRepo.save(team);
