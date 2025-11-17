@@ -35,6 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 				Claims claims = tokenProvider.getClaimsFromToken(token);
 				if (!claims.getExpiration().before(new Date())) {
 					Authentication authentication = tokenProvider.getAuthentication(claims.getSubject());
+                                        System.out.println("Test 1");
 					if (authentication.isAuthenticated()) {
 						SecurityContextHolder.getContext().setAuthentication(authentication);
 					}

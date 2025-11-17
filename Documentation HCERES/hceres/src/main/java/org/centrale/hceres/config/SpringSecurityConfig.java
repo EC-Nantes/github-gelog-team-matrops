@@ -30,7 +30,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-
+        
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors();
@@ -38,4 +38,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests().antMatchers("/user/*").permitAll().anyRequest().authenticated();
 		http.apply(new JwtTokenConfigurer(tokenProvider));
 	}
+        
 }

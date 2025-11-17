@@ -37,6 +37,7 @@ public class ResearchService {
 	
 	/**
 	 * permet d'avoir la liste des chercheurs
+         * @return 
 	 */
 	public Iterable<Researcher> getResearchers(){
 		return researchRepo.findAll();
@@ -73,5 +74,7 @@ public class ResearchService {
 		
 		return saveResearcher;
 	}
+        
+        
 	
 }
