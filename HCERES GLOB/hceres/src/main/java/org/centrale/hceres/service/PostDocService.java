@@ -4,12 +4,11 @@ import org.centrale.hceres.items.*;
 import org.centrale.hceres.repository.*;
 import org.centrale.hceres.repository.PostDocRepository;
 
-import org.centrale.hceres.util.RequestParseException;
-import org.centrale.hceres.util.RequestParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,68 +16,124 @@ import java.util.*;
 @Service
 public class PostDocService {
 
+    /**
+     * Instanciation
+     */
+    @Autowired
+    private ResearchRepository researchRepo;
     @Autowired
     private PostDocRepository postDocRepository;
     @Autowired
     private ActivityRepository activityRepo;
+    @Autowired
+    private TypeActivityRepository typeActivityLevelRepo;
 
-    /**
-     * permet de retourner la liste
-     */
-    public List<Activity> getPostDocs() {
-        return activityRepo.findByIdTypeActivity(TypeActivityId.POST_DOC.getId());
+    public Iterable<PostDoc> getPostDocs(){
+        return postDocRepository.findAll();
     }
 
-    /**
-     * supprimer l'elmt selon son id
-     *
-     * @param id : id de l'elmt
-     */
+
+    public Optional<PostDoc> getPostDoc(final Integer id) {
+        return postDocRepository.findById(id);
+    }
+
     public void deletePostDoc(final Integer id) {
         postDocRepository.deleteById(id);
     }
 
-    public Activity savePostDoc(@RequestBody Map<String, Object> request) throws RequestParseException {
+
+    public PostDoc savePostDoc(@RequestBody Map<String, Object> request) {
         PostDoc postDocToSave = new PostDoc();
 
         // PostDocName :
-        postDocToSave.setNamePostDoc(RequestParser.getAsString(request.get("postDocName")));
+        postDocToSave.setNamePostDoc((String)request.get("postDocName"));
 
         // Supervisor Name
-        postDocToSave.setNameSupervisor(RequestParser.getAsString(request.get("supervisorName")));
+        postDocToSave.setNameSupervisor((String)request.get("supervisorName"));
 
         // Arrival Date :
-        postDocToSave.setArrivalDate(RequestParser.getAsDate(request.get("arrivalDate")));
+        String arrivalDate = (String)request.get("arrivalDate");
+        postDocToSave.setArrivalDate(getDateFromString(arrivalDate, "yyyy-MM-dd"));
 
         // Departure Date :
-        postDocToSave.setDepartureDate(RequestParser.getAsDate(request.get("departureDate")));
+        String departureDate = (String)request.get("departureDate");
+        postDocToSave.setDepartureDate(getDateFromString(departureDate, "yyyy-MM-dd"));
 
         // Duration:
-        postDocToSave.setDuration(RequestParser.getAsInteger(request.get("duration")));
+        postDocToSave.setDuration(Integer.parseInt((String)request.get("duration")));
 
         // Nationality:
-        postDocToSave.setNationality(RequestParser.getAsString(request.get("nationality")));
+        postDocToSave.setNationality((String)request.get("nationality"));
 
         // Original Lab:
-        postDocToSave.setOriginalLab(RequestParser.getAsString(request.get("originalLab")));
+        postDocToSave.setOriginalLab((String)request.get("originalLab"));
 
         // Associated Funding:
-        postDocToSave.setAssociatedFunding(RequestParser.getAsString(request.get("associatedFunding")));
+        postDocToSave.setAssociatedFunding((String)request.get("associatedFunding"));
 
         // Associated Publication Ref:
-        postDocToSave.setAssociatedPubliRef(RequestParser.getAsString(request.get("associatedPubliRef")));
+        postDocToSave.setAssociatedPubliRef((String)request.get("associatedPubliRef"));
 
         // Activity :
         Activity activity = new Activity();
-        postDocToSave.setActivity(activity);
-        activity.setPostDoc(postDocToSave);
-        activity.setIdTypeActivity(TypeActivityId.POST_DOC.getId());
+        TypeActivity typeActivity = typeActivityLevelRepo.getById(21);
+        activity.setIdTypeActivity(typeActivity);
 
-        // get list of researcher doing this activity - currently only one is sent
-        activity.setResearcherList(Collections.singletonList(new Researcher(RequestParser.getAsInteger(request.get("researcherId")))));
+        // Add activity to researchers list :
+        String researcherIdStr = (String)request.get("researcherId");
+        int researcherId = -1;
+        if(researcherIdStr!=null) {
+            try {
+                researcherId = Integer.parseInt(researcherIdStr);
+            } catch (Exception e) {
+                System.out.print("Hello Error I caught you!!");
+            }
+        }
+
+        Optional<Researcher> researcherOp = researchRepo.findById(researcherId);
+        Researcher researcher = researcherOp.get();
+
+        Collection<Activity> activityCollection = researcher.getActivityCollection();
+        activityCollection.add(activity);
+        researcher.setActivityCollection(activityCollection);
+
+        // Add Post Doc to Researcher activities :
+        Collection<Researcher> activityResearch = activity.getResearcherCollection();
+        if (activityResearch == null) {
+            activityResearch = new ArrayList<Researcher>();
+        }
+        activityResearch.add(researcher);
+        activity.setResearcherCollection(activityResearch);
+
+        Activity savedActivity = activityRepo.save(activity);
+        postDocToSave.setActivity(savedActivity);
 
 
-        activity = activityRepo.save(activity);
-        return activity;
+        // Added PostDoc Id :
+        Integer idPostDoc = activity.getIdActivity();
+        postDocToSave.setIdActivity(idPostDoc);
+
+
+        // Persist PostDoc object to the data base :
+        PostDoc savePostDoc = postDocRepository.save(postDocToSave);
+
+        return savePostDoc;
+    }
+
+    // Util function to convert string to date
+    public Date getDateFromString(String aDate, String format) {
+        Date returnedValue = null;
+        try {
+            // try to convert
+            SimpleDateFormat aFormater = new SimpleDateFormat(format);
+            returnedValue = aFormater.parse(aDate);
+        } catch (ParseException ex) {
+        }
+
+        if (returnedValue != null) {
+            Calendar aCalendar = Calendar.getInstance();
+            aCalendar.setTime(returnedValue);
+        }
+        return returnedValue;
     }
 }

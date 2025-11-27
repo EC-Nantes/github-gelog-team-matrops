@@ -2,8 +2,6 @@ package org.centrale.hceres.service;
 
 import org.centrale.hceres.items.*;
 import org.centrale.hceres.repository.*;
-import org.centrale.hceres.util.RequestParseException;
-import org.centrale.hceres.util.RequestParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +15,16 @@ public class PlatformService {
 
     @Autowired
     PlatformRepository platformRepository;
-
+    @Autowired
+    private ResearchRepository researchRepo;
     @Autowired
     private ActivityRepository activityRepo;
+    @Autowired
+    private TypeActivityRepository typeActivityLevelRepo;
 
 
-    public List<Activity> getPlatforms() {
-        return activityRepo.findByIdTypeActivity(TypeActivityId.PLATFORM.getId());
+    public Iterable<Platform> getPlatforms(){
+        return platformRepository.findAll();
     }
 
 
@@ -32,43 +33,94 @@ public class PlatformService {
     }
 
 
-    public void deletePlatform(final Integer id) {
+    public void deleteEducation(final Integer id) {
         platformRepository.deleteById(id);
     }
 
-    public Activity savePlatform(@RequestBody Map<String, Object> request) throws RequestParseException {
+    public Platform savePlatform(@RequestBody Map<String, Object> request) {
 
-        Platform platform = new Platform();
+        Platform platfomToSave = new Platform();
+
+        System.out.println((String) request.get("researcherId"));
 
         // Creation Date
-        platform.setCreationDate(RequestParser.getAsDate(request.get("creationDate")));
+        try {
+        platfomToSave.setCreationDate(getDateFromString((String)request.get("creationDate"), "yyyy-MM-dd"));}
+        catch (Exception e){
+            platfomToSave.setCreationDate(getDateFromString("2022-03-05", "yyyy-MM-dd"));
+        }
 
         // Description
-        platform.setDescription(RequestParser.getAsString(request.get("description")));
+        platfomToSave.setDescription((String)request.get("description"));
 
         // Managers
-        platform.setManagers(RequestParser.getAsString(request.get("managers")));
+        platfomToSave.setManagers((String)request.get("managers"));
 
         // Affiliation
-        platform.setAffiliation(RequestParser.getAsString(request.get("affiliation")));
+        platfomToSave.setAffiliation((String)request.get("affiliation"));
 
         // Labellisation
-        platform.setLabellisation(RequestParser.getAsString(request.get("labellisation")));
+        platfomToSave.setLabellisation((String)request.get("labellisation"));
 
         // Open Private Researches
-        platform.setOpenPrivateResearchers(RequestParser.getAsBoolean(request.get("openPrivateResearchers")));
+        platfomToSave.setOpenPrivateResearchers(Boolean.valueOf((String)request.get("openPrivateResearchers")));
 
 
         // Activity :
         Activity activity = new Activity();
-        platform.setActivity(activity);
-        activity.setPlatform(platform);
-        activity.setIdTypeActivity(TypeActivityId.PLATFORM.getId());
+        TypeActivity typeActivity = typeActivityLevelRepo.getById(6);
+        activity.setIdTypeActivity(typeActivity);
 
-        // get list of researcher doing this activity - currently only one is sent
-        activity.setResearcherList(Collections.singletonList(new Researcher(RequestParser.getAsInteger(request.get("researcherId")))));
+        // Add this activity to the researcher activity list :
+        String researcherIdStr = (String)request.get("researcherId");
+        int researcherId = -1;
+        researcherId = Integer.parseInt(researcherIdStr);
+        Optional<Researcher> researcherOp = researchRepo.findById(researcherId);
+        Researcher researcher = researcherOp.get();
 
-        activity = activityRepo.save(activity);
-        return activity;
+        Collection<Activity> activityCollection = researcher.getActivityCollection();
+        activityCollection.add(activity);
+        researcher.setActivityCollection(activityCollection);
+
+        // Add this activity to the reasearcher :
+        Collection<Researcher> activityResearch = activity.getResearcherCollection();
+        if (activityResearch == null) {
+            activityResearch = new ArrayList<Researcher>();
+        }
+        activityResearch.add(researcher);
+        activity.setResearcherCollection(activityResearch);
+
+        Activity savedActivity = activityRepo.save(activity);
+        platfomToSave.setActivity(savedActivity);
+
+
+        // Created platform id :
+        Integer idPlatform = activity.getIdActivity();
+        platfomToSave.setIdActivity(idPlatform);
+
+        // Persist Platform to database :
+        Platform savePlatform = platformRepository.save(platfomToSave);
+
+        return savePlatform;
+
+
     }
+
+    // Date to String
+    public Date getDateFromString(String aDate, String format) {
+        Date returnedValue = null;
+        try {
+            // try to convert
+            SimpleDateFormat aFormater = new SimpleDateFormat(format);
+            returnedValue = aFormater.parse(aDate);
+        } catch (ParseException ex) {
+        }
+
+        if (returnedValue != null) {
+            Calendar aCalendar = Calendar.getInstance();
+            aCalendar.setTime(returnedValue);
+        }
+        return returnedValue;
+    }
+
 }

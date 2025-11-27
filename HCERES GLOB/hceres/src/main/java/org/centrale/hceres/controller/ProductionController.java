@@ -1,6 +1,5 @@
 package org.centrale.hceres.controller;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -9,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 
 import org.centrale.hceres.service.ProductionService;
-import org.centrale.hceres.util.RequestParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,13 +36,28 @@ public class ProductionController {
 
 		return productService.getToolProduct();
 	}
+
+	/**
+	 * avoir un elmt grace a son id
+	 * @param id : id de l'elmt
+	 * @return : l'elmt 
+	 */
+	@GetMapping("/{id}")
+	public ToolProduct getToolProduct(@PathVariable("id") final Integer id) {
+		Optional<ToolProduct> product = productService.getToolProduct(id);
+		if(product.isPresent()) {
+			return product.get();
+		} else {
+			return null;
+		}
+	}
 	
 	/**
 	 * ajouter un elmt a la base de donnees
 	 * @return l'elmt ajoute
 	 */
 	@PostMapping("/AddProduction")
-	public ToolProduct createToolProduct(@RequestBody Map<String, Object> request) throws RequestParseException {
+	public ToolProduct createToolProduct(@RequestBody Map<String, Object> request) {
 		return productService.saveToolProduct(request);
 	}
 	
@@ -55,6 +68,6 @@ public class ProductionController {
 	 */
 	@DeleteMapping("/deleteProduction/{id}")
 	public void deleteToolProduct(@PathVariable("id") final Integer id) {
-		productService.deleteToolProduct(id);
+		productService.deleteToolProduct(id);;
 	}
 }

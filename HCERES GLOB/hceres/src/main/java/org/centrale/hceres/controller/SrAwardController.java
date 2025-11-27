@@ -1,50 +1,39 @@
 package org.centrale.hceres.controller;
 
 
-import org.centrale.hceres.items.Activity;
 import org.centrale.hceres.items.SrAward;
 import org.centrale.hceres.service.SrAwardService;
-import org.centrale.hceres.util.RequestParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(originPatterns = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SrAwardController {
 
     @Autowired
-    private SrAwardService srAwardService;
+    SrAwardService SrAwardService;
 
-    /**
-     * return a list of activities of specified type only
-     */
-    @GetMapping("/SrAwards")
-    public List<Activity> getSrAwards() {
-        return srAwardService.getSrAwards();
+
+    @GetMapping("Api/SrAwards")
+    public Iterable<SrAward> getSrAwards() {
+        return SrAwardService.getSrAwards();
     }
 
-    /**
-     * create an element in database
-     *
-     * @return Activity
-     */
-    @PostMapping(value = "/SrAward/Create")
-    public Activity createSrAward(@RequestBody Map<String, Object> request) throws RequestParseException {
-        return srAwardService.saveSrAward(request);
+
+    @GetMapping("Api/SrAward/{id}")
+    public SrAward getSrAward(@PathVariable("id") final Integer id) {
+        Optional<SrAward> SrAward = SrAwardService.getSrAward(id);
+        if(SrAward.isPresent()) {
+            return SrAward.get();
+        } else {
+            return null;
+        }
     }
 
-    /**
-     * Delete - Delete an element
-     *
-     * @param id - The id of the element
-     */
-    @DeleteMapping("/SrAward/Delete/{id}")
-    public void deleteSrAward(@RequestBody @PathVariable("id") final Integer id) {
-        srAwardService.deleteSrAward(id);
+    @PostMapping(value = "Api/AddSrAward")
+    public SrAward createSrAward(@RequestBody Map<String, Object> request) {
+        return SrAwardService.saveSrAward(request);
     }
 }

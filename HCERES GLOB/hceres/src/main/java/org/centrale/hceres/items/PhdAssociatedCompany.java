@@ -8,14 +8,19 @@
  * L LETERTRE, S LIMOUX, JY MARTIN
  * -------------------------------------------------------------------------------- */
 package org.centrale.hceres.items;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -23,10 +28,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "phd_associated_company")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name = "PhdAssociatedCompany.findAll", query = "SELECT p FROM PhdAssociatedCompany p"),
+    @NamedQuery(name = "PhdAssociatedCompany.findByPhdStudentId", query = "SELECT p FROM PhdAssociatedCompany p WHERE p.phdAssociatedCompanyPK.phdStudentId = :phdStudentId"),
+    @NamedQuery(name = "PhdAssociatedCompany.findByCompanyId", query = "SELECT p FROM PhdAssociatedCompany p WHERE p.phdAssociatedCompanyPK.companyId = :companyId"),
+    @NamedQuery(name = "PhdAssociatedCompany.findByPhdAssociatedCompanyStart", query = "SELECT p FROM PhdAssociatedCompany p WHERE p.phdAssociatedCompanyStart = :phdAssociatedCompanyStart"),
+    @NamedQuery(name = "PhdAssociatedCompany.findByPhdAssociatedCompanyEnd", query = "SELECT p FROM PhdAssociatedCompany p WHERE p.phdAssociatedCompanyEnd = :phdAssociatedCompanyEnd")})
 public class PhdAssociatedCompany implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,4 +55,146 @@ public class PhdAssociatedCompany implements Serializable {
     @JoinColumn(name = "phd_student_id", referencedColumnName = "phd_student_id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private PhdStudent phdStudent;
+
+    /**
+     *
+     */
+    public PhdAssociatedCompany() {
+    }
+
+    /**
+     *
+     * @param phdAssociatedCompanyPK
+     */
+    public PhdAssociatedCompany(PhdAssociatedCompanyPK phdAssociatedCompanyPK) {
+        this.phdAssociatedCompanyPK = phdAssociatedCompanyPK;
+    }
+
+    /**
+     *
+     * @param phdStudentId
+     * @param companyId
+     */
+    public PhdAssociatedCompany(int phdStudentId, int companyId) {
+        this.phdAssociatedCompanyPK = new PhdAssociatedCompanyPK(phdStudentId, companyId);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public PhdAssociatedCompanyPK getPhdAssociatedCompanyPK() {
+        return phdAssociatedCompanyPK;
+    }
+
+    /**
+     *
+     * @param phdAssociatedCompanyPK
+     */
+    public void setPhdAssociatedCompanyPK(PhdAssociatedCompanyPK phdAssociatedCompanyPK) {
+        this.phdAssociatedCompanyPK = phdAssociatedCompanyPK;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Date getPhdAssociatedCompanyStart() {
+        return phdAssociatedCompanyStart;
+    }
+
+    /**
+     *
+     * @param phdAssociatedCompanyStart
+     */
+    public void setPhdAssociatedCompanyStart(Date phdAssociatedCompanyStart) {
+        this.phdAssociatedCompanyStart = phdAssociatedCompanyStart;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Date getPhdAssociatedCompanyEnd() {
+        return phdAssociatedCompanyEnd;
+    }
+
+    /**
+     *
+     * @param phdAssociatedCompanyEnd
+     */
+    public void setPhdAssociatedCompanyEnd(Date phdAssociatedCompanyEnd) {
+        this.phdAssociatedCompanyEnd = phdAssociatedCompanyEnd;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Company getCompany() {
+        return company;
+    }
+
+    /**
+     *
+     * @param company
+     */
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public PhdStudent getPhdStudent() {
+        return phdStudent;
+    }
+
+    /**
+     *
+     * @param phdStudent
+     */
+    public void setPhdStudent(PhdStudent phdStudent) {
+        this.phdStudent = phdStudent;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (phdAssociatedCompanyPK != null ? phdAssociatedCompanyPK.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     *
+     * @param object
+     * @return
+     */
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof PhdAssociatedCompany)) {
+            return false;
+        }
+        PhdAssociatedCompany other = (PhdAssociatedCompany) object;
+        if ((this.phdAssociatedCompanyPK == null && other.phdAssociatedCompanyPK != null) || (this.phdAssociatedCompanyPK != null && !this.phdAssociatedCompanyPK.equals(other.phdAssociatedCompanyPK))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String toString() {
+        return "org.centrale.hceres.items.PhdAssociatedCompany[ phdAssociatedCompanyPK=" + phdAssociatedCompanyPK + " ]";
+    }
+    
 }

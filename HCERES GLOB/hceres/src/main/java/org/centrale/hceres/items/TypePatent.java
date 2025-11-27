@@ -8,15 +8,20 @@
  * L LETERTRE, S LIMOUX, JY MARTIN
  * -------------------------------------------------------------------------------- */
 package org.centrale.hceres.items;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.*;
+import java.util.Collection;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 /**
@@ -25,10 +30,10 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "type_patent")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NamedQueries({
+    @NamedQuery(name = "TypePatent.findAll", query = "SELECT t FROM TypePatent t"),
+    @NamedQuery(name = "TypePatent.findByTypePatentId", query = "SELECT t FROM TypePatent t WHERE t.typePatentId = :typePatentId"),
+    @NamedQuery(name = "TypePatent.findByNameChoice", query = "SELECT t FROM TypePatent t WHERE t.nameChoice = :nameChoice")})
 public class TypePatent implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,7 +45,107 @@ public class TypePatent implements Serializable {
     @Size(max = 256)
     @Column(name = "name_choice")
     private String nameChoice;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "typePatentId")
-    private List<Patent> patentList;
+    private Collection<Patent> patentCollection;
+
+    /**
+     *
+     */
+    public TypePatent() {
+    }
+
+    /**
+     *
+     * @param typePatentId
+     */
+    public TypePatent(Integer typePatentId) {
+        this.typePatentId = typePatentId;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Integer getTypePatentId() {
+        return typePatentId;
+    }
+
+    /**
+     *
+     * @param typePatentId
+     */
+    public void setTypePatentId(Integer typePatentId) {
+        this.typePatentId = typePatentId;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getNameChoice() {
+        return nameChoice;
+    }
+
+    /**
+     *
+     * @param nameChoice
+     */
+    public void setNameChoice(String nameChoice) {
+        this.nameChoice = nameChoice;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Collection<Patent> getPatentCollection() {
+        return patentCollection;
+    }
+
+    /**
+     *
+     * @param patentCollection
+     */
+    public void setPatentCollection(Collection<Patent> patentCollection) {
+        this.patentCollection = patentCollection;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (typePatentId != null ? typePatentId.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     *
+     * @param object
+     * @return
+     */
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof TypePatent)) {
+            return false;
+        }
+        TypePatent other = (TypePatent) object;
+        if ((this.typePatentId == null && other.typePatentId != null) || (this.typePatentId != null && !this.typePatentId.equals(other.typePatentId))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String toString() {
+        return "org.centrale.hceres.items.TypePatent[ typePatentId=" + typePatentId + " ]";
+    }
+    
 }

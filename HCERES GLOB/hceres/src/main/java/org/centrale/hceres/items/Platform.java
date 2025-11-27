@@ -8,11 +8,6 @@
  * L LETERTRE, S LIMOUX, JY MARTIN
  * -------------------------------------------------------------------------------- */
 package org.centrale.hceres.items;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -26,23 +21,14 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "platform")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Platform implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "id_activity")
     private Integer idActivity;
-
-    @JsonIgnore
-    @JoinColumn(name = "id_activity")
-    @MapsId
-    @OneToOne(cascade = CascadeType.ALL)
-    private Activity activity;
-
     @Column(name = "creation_date")
     @Temporal(TemporalType.DATE)
     private Date creationDate;
@@ -60,5 +46,188 @@ public class Platform implements Serializable {
     private String labellisation;
     @Column(name = "open_private_researchers")
     private Boolean openPrivateResearchers;
+    @JoinColumn(name = "id_activity", referencedColumnName = "id_activity", insertable = false, updatable = false)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    private Activity activity;
 
+    /**
+     *
+     */
+    public Platform() {
+    }
+
+    /**
+     *
+     * @param idActivity
+     */
+    public Platform(Integer idActivity) {
+        this.idActivity = idActivity;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Integer getIdActivity() {
+        return idActivity;
+    }
+
+    /**
+     *
+     * @param idActivity
+     */
+    public void setIdActivity(Integer idActivity) {
+        this.idActivity = idActivity;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     *
+     * @param creationDate
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     *
+     * @param description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getManagers() {
+        return managers;
+    }
+
+    /**
+     *
+     * @param managers
+     */
+    public void setManagers(String managers) {
+        this.managers = managers;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getAffiliation() {
+        return affiliation;
+    }
+
+    /**
+     *
+     * @param affiliation
+     */
+    public void setAffiliation(String affiliation) {
+        this.affiliation = affiliation;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getLabellisation() {
+        return labellisation;
+    }
+
+    /**
+     *
+     * @param labellisation
+     */
+    public void setLabellisation(String labellisation) {
+        this.labellisation = labellisation;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Boolean getOpenPrivateResearchers() {
+        return openPrivateResearchers;
+    }
+
+    /**
+     *
+     * @param openPrivateResearchers
+     */
+    public void setOpenPrivateResearchers(Boolean openPrivateResearchers) {
+        this.openPrivateResearchers = openPrivateResearchers;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Activity getActivity() {
+        return activity;
+    }
+
+    /**
+     *
+     * @param activity
+     */
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (idActivity != null ? idActivity.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     *
+     * @param object
+     * @return
+     */
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Platform)) {
+            return false;
+        }
+        Platform other = (Platform) object;
+        if ((this.idActivity == null && other.idActivity != null) || (this.idActivity != null && !this.idActivity.equals(other.idActivity))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String toString() {
+        return "org.centrale.hceres.items.Platform[ idActivity=" + idActivity + " ]";
+    }
+    
 }

@@ -1,82 +1,151 @@
 package org.centrale.hceres.service;
 
-import java.util.*;
-
+import lombok.Data;
 import org.centrale.hceres.items.*;
-
 import org.centrale.hceres.repository.ActivityRepository;
-import org.centrale.hceres.util.RequestParseException;
-import org.centrale.hceres.util.RequestParser;
+import org.centrale.hceres.repository.ResearchRepository;
+import org.centrale.hceres.repository.TypeActivityRepository;
+import org.centrale.hceres.repository.PublicationRepository;
+import org.centrale.hceres.repository.PublicationTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import lombok.Data;
 
-// permet de traiter la requete HTTP puis l'associer a la fonction de repository qui va donner une reponse
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 @Data
 @Service
 public class PublicationService {
 
+    /**
+     * Instanciation
+     */
 
     @Autowired
+    private PublicationRepository publicationrepo;
+    @Autowired
+    private PublicationTypeRepository publicationTypeRepo;
+    @Autowired
+    private ResearchRepository researchRepo;
+    @Autowired
     private ActivityRepository activityRepo;
+    @Autowired
+    private TypeActivityRepository typeActivityLevelRepo;
 
     /**
-     * permet de retourner la liste
+     * Retourner la liste des publications
      */
-    public List<Activity> getPublications() {
-        return activityRepo.findByIdTypeActivity(TypeActivityId.PUBLICATION.getId());
-    }
+    public Iterable<Publication> getPublications()
+    {return  publicationrepo.findAll();}
 
     /**
-     * supprimer l'elmt selon son id
-     *
+     * retourner l'elmt selon son id
      * @param id : id de l'elmt
+     * @return : elmt a retourner
      */
-    public void deletePublication(final Integer id) {
-        activityRepo.deleteById(id);
-    }
+    public Optional<Publication> getPublication(final Integer id)
+    {return publicationrepo.findById(id);}
 
     /**
      * permet d'ajouter un elmt
-     *
      * @return : l'elemt ajouter a la base de donnees
      */
-    public Activity savePublication(@RequestBody Map<String, Object> request) throws RequestParseException {
+    @Transactional
+    public Publication savePublication(@RequestBody Map<String, Object> request){
 
-        Publication publication = new Publication();
-        publication.setTitle(RequestParser.getAsString(request.get("title")));
-        publication.setAuthors(RequestParser.getAsString(request.get("authors")));
-        publication.setSource(RequestParser.getAsString(request.get("source")));
-        publication.setPublicationDate(RequestParser.getAsDate(request.get("publicationDate")));
-        publication.setPmid(RequestParser.getAsString(request.get("pmid")));
-        publication.setImpactFactor(RequestParser.getAsBigDecimal(request.get("impactFactor")));
+        Publication publicationTosave = new Publication();
+
+        //Publication title
+        publicationTosave.setTitle((String) request.get("title"));
+
+        //Publication authors
+        publicationTosave.setAuthors((String) request.get("authors"));
+
+        //Publication source
+        publicationTosave.setSource((String) request.get("source"));
+
+        //Publication date
+        String datepub = (String) request.get("publicationDate");
+        publicationTosave.setPublicationDate(getDateFromString(datepub, "yyyy-MM-dd"));
+
+        //Publication pmid
+        publicationTosave.setPmid((String) request.get("pmid"));
+
+        //Publication impact_factor
+        String inputString = (String) request.get("impactFactor");
+        BigDecimal result = new BigDecimal(inputString);
+        publicationTosave.setImpactFactor((result));
+
+        //Publication type
+        PublicationType publicationType = new PublicationType();
+        publicationType.setPublicationTypeName((String) request.get("publicationTypeName"));
+        PublicationType savePublicationType = publicationTypeRepo.save(publicationType);
+        publicationTosave.setPublicationTypeId(savePublicationType);
 
         // Activity :
         Activity activity = new Activity();
-        publication.setActivity(activity);
-        activity.setPublication(publication);
-        activity.setIdTypeActivity(TypeActivityId.PUBLICATION.getId());
+        TypeActivity typeActivity = typeActivityLevelRepo.getById(1);
+        activity.setIdTypeActivity(typeActivity);
 
-        // get list of researcher doing this activity - currently only one is sent
-        activity.setResearcherList(Collections.singletonList(new Researcher(RequestParser.getAsInteger(request.get("researcherId")))));
+        // Add this activity to the researcher activity list :
+        String researcherIdStr = (String)request.get("researcherId");
+        int researcherId = 1;
+        if (researcherIdStr != null){
+            researcherId = Integer.parseInt(researcherIdStr);
+        }
 
-        activity = activityRepo.save(activity);
-        return activity;
+        Optional<Researcher> researcherOp = researchRepo.findById(researcherId);
+        Researcher researcher = researcherOp.get();
+
+        Collection<Activity> activityCollection = researcher.getActivityCollection();
+        activityCollection.add(activity);
+        researcher.setActivityCollection(activityCollection);
+
+        // Add this activity to the reasearcher :
+        Collection<Researcher> activityResearch = activity.getResearcherCollection();
+        if (activityResearch == null) {
+            activityResearch = new ArrayList<Researcher>();
+        }
+        activityResearch.add(researcher);
+        activity.setResearcherCollection(activityResearch);
+
+        Activity savedActivity = activityRepo.save(activity);
+        publicationTosave.setActivity(savedActivity);
+
+        // Created publication id :
+        Integer idPublication = activity.getIdActivity();
+        publicationTosave.setIdActivity(idPublication);
+
+        // Persist publication to database :
+        Publication savePublication = publicationrepo.save(publicationTosave);
+
+        return savePublication;
+
     }
 
+
+
+    // Convertir une date string en Date
+    public Date getDateFromString(String aDate, String format) {
+        Date returnedValue = null;
+        try {
+            // try to convert
+            SimpleDateFormat aFormater = new SimpleDateFormat(format);
+            returnedValue = aFormater.parse(aDate);
+        } catch (ParseException ex) {
+        }
+
+        if (returnedValue != null) {
+            Calendar aCalendar = Calendar.getInstance();
+            aCalendar.setTime(returnedValue);
+        }
+        return returnedValue;
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

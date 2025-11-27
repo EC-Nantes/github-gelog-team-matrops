@@ -1,49 +1,38 @@
 package org.centrale.hceres.controller;
 
 
-import org.centrale.hceres.items.Activity;
+import org.centrale.hceres.items.IncomingMobility;
 import org.centrale.hceres.service.IncomingMobilityService;
-import org.centrale.hceres.util.RequestParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
-@CrossOrigin(originPatterns = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class IncomingMobilityController {
 
     @Autowired
-    IncomingMobilityService incomingMobilityService;
+    IncomingMobilityService IncomingMobilityService;
 
-    /**
-     * return a list of activities of specified type only
-     */
-    @GetMapping(value = "/IncomingMobilities")
-    public List<Activity> getIncomingMobilities() {
-        return incomingMobilityService.getIncomingMobilities();
+    @GetMapping("Api/IncomingMobilitys")
+    public Iterable<IncomingMobility> getIncomingMobilitys() {
+        return IncomingMobilityService.getIncomingMobilitys();
     }
 
-    /**
-     * create an element in database
-     *
-     * @return Activity
-     */
-    @PostMapping(value = "/IncomingMobility/Create")
-    public Activity createIncomingMobility(@RequestBody Map<String, Object> request) throws RequestParseException {
-        return incomingMobilityService.saveIncomingMobility(request);
+
+    @GetMapping("Api/IncomingMobility/{id}")
+    public IncomingMobility getIncomingMobility(@PathVariable("id") final Integer id) {
+        Optional<IncomingMobility> IncomingMobility = IncomingMobilityService.getIncomingMobility(id);
+        if(IncomingMobility.isPresent()) {
+            return IncomingMobility.get();
+        } else {
+            return null;
+        }
     }
 
-    /**
-     * Delete - Delete an element
-     *
-     * @param id - The id of the element
-     */
-    @DeleteMapping("/IncomingMobility/Delete/{id}")
-
-    public void deleteIncomingMobility(@RequestBody @PathVariable("id") final Integer id) {
-        incomingMobilityService.deleteIncomingMobility(id);
+    @PostMapping(value = "Api/AddIncomingMobility")
+    public IncomingMobility createIncomingMobility(@RequestBody Map<String, Object> request) {
+        return IncomingMobilityService.saveIncomingMobility(request);
     }
 }

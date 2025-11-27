@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TypeActivityRepository extends JpaRepository<TypeActivity, Integer>{
+
 }

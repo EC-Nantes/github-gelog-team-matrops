@@ -2,90 +2,172 @@ package org.centrale.hceres.service;
 
 import org.centrale.hceres.items.*;
 import org.centrale.hceres.repository.*;
-import org.centrale.hceres.util.RequestParseException;
-import org.centrale.hceres.util.RequestParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
 public class EditorialService {
     @Autowired
-    EditorialRepository editorialRepository;
+    EditorialRepository  editorialRepository;
+    @Autowired
+    private ResearchRepository researchRepo;
     @Autowired
     private ActivityRepository activityRepo;
     @Autowired
-    private JournalRepository journalRepository;
+    private TypeActivityRepository typeActivityLevelRepo;
+    @Autowired
+    private  JournalRepository journalRepository;
     @Autowired
     private FunctionEditorialActivityRepository functionEditorialActivityRepository;
 
-    /**
-     * permet de retourner la liste
-     */
-    public List<Activity> getEditorialActivities() {
-        return activityRepo.findByIdTypeActivity(TypeActivityId.EDITORIAL_ACTIVITY.getId());
+
+    public Iterable<EditorialActivity> getEditorials(){
+        return editorialRepository.findAll();
     }
 
-    /**
-     * supprimer l'elmt selon son id
-     *
-     * @param id : id de l'elmt
-     */
-    public void deleteEditorialActivity(final Integer id) {
+
+    public Optional<EditorialActivity> getEditorial(final Integer id) {
+        return editorialRepository.findById(id);
+    }
+
+
+    public void deleteEditorial(final Integer id) {
         editorialRepository.deleteById(id);
     }
 
-    public Activity saveEditorial(@RequestBody Map<String, Object> request) throws RequestParseException {
+    public EditorialActivity saveEditorial(@RequestBody Map<String, Object> request) {
 
-        EditorialActivity editorial = new EditorialActivity();
-
-        // Start Date
-        editorial.setStartDate(RequestParser.getAsDate(request.get("startDate")));
+        EditorialActivity editorialToSave = new EditorialActivity();
 
         // Start Date
-        editorial.setEndDate(RequestParser.getAsDate(request.get("endDate")));
+        editorialToSave.setStartDate(getDateFromString((String)request.get("startDate"), "yyyy-MM-dd"));
+
+        // Start Date
+        editorialToSave.setEndDate(getDateFromString((String)request.get("endDate"), "yyyy-MM-dd"));
 
         // Impact Factor
-        String impactFactor = RequestParser.getAsString(request.get("impactFactor"));
+        String impactFactor = (String)request.get("impactFactor");
         BigDecimal impactFactorInt = new BigDecimal(impactFactor);
-        editorial.setImpactFactor(impactFactorInt);
+        editorialToSave.setImpactFactor(impactFactorInt);
 
         // Activity :
         Activity activity = new Activity();
-        editorial.setActivity(activity);
-        activity.setEditorialActivity(editorial);
-        activity.setIdTypeActivity(TypeActivityId.EDITORIAL_ACTIVITY.getId());
+        TypeActivity typeActivity = typeActivityLevelRepo.getById(5);
+        activity.setIdTypeActivity(typeActivity);
 
-        // get list of researcher doing this activity - currently only one is sent
-        activity.setResearcherList(Collections.singletonList(new Researcher(RequestParser.getAsInteger(request.get("researcherId")))));
+        // Add this activity to the researcher activity list :
+        String researcherIdStr = (String)request.get("researcherId");
+        int researcherId = -1;
+        researcherId = Integer.parseInt(researcherIdStr);
+        Optional<Researcher> researcherOp = researchRepo.findById(researcherId);
+        Researcher researcher = researcherOp.get();
+        Collection<Activity> activityCollection = researcher.getActivityCollection();
+        activityCollection.add(activity);
+        researcher.setActivityCollection(activityCollection);
+
+        // Add this activity to the reasearcher :
+        Collection<Researcher> activityResearch = activity.getResearcherCollection();
+        if (activityResearch == null) {
+            activityResearch = new ArrayList<Researcher>();
+        }
+        activityResearch.add(researcher);
+        activity.setResearcherCollection(activityResearch);
+
+        Activity savedActivity = activityRepo.save(activity);
+        editorialToSave.setActivity(savedActivity);
+
+        // Created Editorial id :
+        Integer idEditorial = activity.getIdActivity();
+        editorialToSave.setIdActivity(idEditorial);
 
         // Creating journal object with given name in form (must include in future the possibility to select among the existing journals)
-        String journalName = RequestParser.getAsString(request.get("journalName"));
+        String journalName = (String)request.get("journalName") ;
 
-        Journal journal = journalRepository.findByName(journalName);
-        if (journal == null) {
-            journal = new Journal();
+        if (journalRepository.findByName(journalName)==null){
+            Journal journal = new Journal();
             journal.setJournalName(journalName);
+            editorialToSave.setJournalId(journal);
         }
-        editorial.setJournal(journal);
+        else {
+            Journal journal = journalRepository.findByName(journalName);
+            editorialToSave.setJournalId(journal);
+        }
 
 
-        // Creating an editing function
+        //Creating an editing function
         // Search in dataBase by function name if it doesn't exist create It
-        String functionName = RequestParser.getAsString(request.get("functionName"));
-        FunctionEditorialActivity functionEditorialActivity = functionEditorialActivityRepository.findByName(functionName);
-        if (functionEditorialActivity == null) {
-            functionEditorialActivity = new FunctionEditorialActivity();
+        String functionName = (String)request.get("functionName");
+        if (functionEditorialActivityRepository.findByName(functionName)==null){
+            FunctionEditorialActivity functionEditorialActivity = new FunctionEditorialActivity();
+
             // Setting the function Name
             functionEditorialActivity.setFunctionEditorialActivityName(functionName);
+
+            // Getting existing collection of editorial activities
+            Collection<EditorialActivity> collection = functionEditorialActivity.getEditorialActivityCollection();
+
+            // Adding the new editorial activity to the collection
+            if (collection == null) {
+                collection = new ArrayList<EditorialActivity>();
+            }
+            collection.add(editorialToSave);
+            functionEditorialActivity.setEditorialActivityCollection(collection);
+
+            // Persist Function editorial activity
+            //functionEditorialActivityRepository.save(functionEditorialActivity);
+
+            // Adding id to editorial activity
+            editorialToSave.setFunctionEditorialActivityId(functionEditorialActivity);
         }
-        editorial.setFunctionEditorialActivity(functionEditorialActivity);
 
-        activity = activityRepo.save(activity);
+        else{
+            FunctionEditorialActivity functionEditorialActivity = functionEditorialActivityRepository.findByName(functionName);
 
-        return activity;
+            // Getting existing collection of editorial activities
+            Collection<EditorialActivity> collection = functionEditorialActivity.getEditorialActivityCollection();
+
+            // Adding the new editorial activity to the collection
+
+            collection.add(editorialToSave);
+            functionEditorialActivity.setEditorialActivityCollection(collection);
+
+            // Persist Function editorial activity
+            //functionEditorialActivityRepository.save(functionEditorialActivity);
+
+            // Adding id to editorial activity
+            editorialToSave.setFunctionEditorialActivityId(functionEditorialActivity);
+        }
+
+        // Persist Platform to database :
+        EditorialActivity saveEditorial = editorialRepository.save(editorialToSave);
+
+        return saveEditorial;
+
+
+    }
+
+    // Date to String
+    public Date getDateFromString(String aDate, String format) {
+        Date returnedValue = null;
+        try {
+            // try to convert
+            SimpleDateFormat aFormater = new SimpleDateFormat(format);
+            returnedValue = aFormater.parse(aDate);
+        } catch (ParseException ex) {
+        }
+
+        if (returnedValue != null) {
+            Calendar aCalendar = Calendar.getInstance();
+            aCalendar.setTime(returnedValue);
+        }
+        return returnedValue;
     }
 }

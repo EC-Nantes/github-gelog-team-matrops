@@ -11,5 +11,6 @@ public class HceresApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HceresApplication.class, args);
 	}
+
 }
 
