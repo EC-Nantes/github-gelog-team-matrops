@@ -2,7 +2,6 @@ package org.centrale.hceres.controller;
 
 
 import org.centrale.hceres.items.Activity;
-import org.centrale.hceres.items.Book;
 import org.centrale.hceres.service.BookService;
 import org.centrale.hceres.util.RequestParseException;
 import org.springframework.beans.factory.annotation.Autowired;

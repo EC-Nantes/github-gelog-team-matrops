@@ -15,10 +15,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,17 +34,21 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class Nationality implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "nationality_name")
+    private String nationalityName;
+    @OneToMany(mappedBy = "nationalityId")
+    @JsonIgnore
+    private Collection<PhdStudent> phdStudentCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "nationality_id")
     private Integer nationalityId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
-    @Column(name = "nationality_name")
-    private String nationalityName;
 
     @JsonIgnore
     @JoinTable(name = "researcher_nationality", joinColumns = {
@@ -74,5 +80,20 @@ public class Nationality implements Serializable {
     public void setResearcherList(List<Researcher> researcherList) {
         this.researcherList = researcherList;
     }
+
+    public Nationality() {
+    }
+
+
+
+    @XmlTransient
+    public Collection<PhdStudent> getPhdStudentCollection() {
+        return phdStudentCollection;
+    }
+
+    public void setPhdStudentCollection(Collection<PhdStudent> phdStudentCollection) {
+        this.phdStudentCollection = phdStudentCollection;
+    }
+
     
 }

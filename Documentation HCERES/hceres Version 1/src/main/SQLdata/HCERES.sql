@@ -420,6 +420,7 @@ CREATE SEQUENCE public.evaluation_thesis_role_evaluation_thesis_role_id_seq
     CACHE 1;
 
 
+
 --
 -- TOC entry 3888 (class 0 OID 0)
 -- Dependencies: 223
@@ -925,17 +926,31 @@ CREATE TABLE public.patent (
     name_company_involved character varying(2048)
 );
 
+CREATE TABLE public.training_thesis (
+    id_activity integer NOT NULL,
+    phd_student_id integer NOT NULL,
+    thesis_start date NOT NULL,
+    thesis_type_id integer NOT NULL,
+    thesis_main_funding character varying(2048),
+    thesis_defense_date date,
+    thesis_duration integer DEFAULT 0 NOT NULL,
+    thesis_futur text,
+    thesis_number_articles integer,
+    thesis_number_articles_first_second_position integer,
+    thesis_articles_first_second_position_references text
+);
+
 
 --
 -- TOC entry 249 (class 1259 OID 24861)
--- Name: phd_associated_company; Type: TABLE; Schema: public; 
+-- Name: thesis_associated_company; Type: TABLE; Schema: public; 
 --
 
-CREATE TABLE public.phd_associated_company (
-    phd_student_id integer NOT NULL,
+CREATE TABLE public.thesis_associated_company (
+    id_activity integer NOT NULL,
     company_id integer NOT NULL,
-    phd_associated_company_start date,
-    phd_associated_company_end date
+    thesis_associated_company_start date,
+    thesis_associated_company_end date
 );
 
 
@@ -946,24 +961,21 @@ CREATE TABLE public.phd_associated_company (
 
 CREATE TABLE public.phd_student (
     phd_student_id integer NOT NULL,
-    researcher_id integer NOT NULL,
-    phd_start date NOT NULL,
-    phd_type_id integer NOT NULL,
-    phd_main_funding character varying(2048),
-    phd_defense_date date,
-    phd_duration integer DEFAULT 0 NOT NULL,
-    phd_futur text
+    phd_student_name character varying(2048),
+    phd_student_surname character varying(2048),
+    nationality_id integer
 );
+
 
 
 --
 -- TOC entry 251 (class 1259 OID 24871)
--- Name: phd_type; Type: TABLE; Schema: public; 
+-- Name: thesis_type; Type: TABLE; Schema: public; 
 --
 
-CREATE TABLE public.phd_type (
-    phd_type_id integer NOT NULL,
-    phd_type_name character varying(2048) NOT NULL
+CREATE TABLE public.thesis_type (
+    thesis_type_id integer NOT NULL,
+    thesis_type_name character varying(2048) NOT NULL
 );
 
 
@@ -1757,10 +1769,10 @@ ALTER SEQUENCE public.seq_phd_student OWNED BY public.phd_student.phd_student_id
 
 --
 -- TOC entry 297 (class 1259 OID 25027)
--- Name: seq_phd_type; Type: SEQUENCE; Schema: public; 
+-- Name: seq_thesis_type; Type: SEQUENCE; Schema: public; 
 --
 
-CREATE SEQUENCE public.seq_phd_type
+CREATE SEQUENCE public.seq_thesis_type
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1771,10 +1783,10 @@ CREATE SEQUENCE public.seq_phd_type
 --
 -- TOC entry 3913 (class 0 OID 0)
 -- Dependencies: 297
--- Name: seq_phd_type; Type: SEQUENCE OWNED BY; Schema: public; 
+-- Name: seq_thesis_type; Type: SEQUENCE OWNED BY; Schema: public; 
 --
 
-ALTER SEQUENCE public.seq_phd_type OWNED BY public.phd_type.phd_type_id;
+ALTER SEQUENCE public.seq_thesis_type OWNED BY public.thesis_type.thesis_type_id;
 
 
 --
@@ -2491,10 +2503,10 @@ ALTER TABLE ONLY public.phd_student ALTER COLUMN phd_student_id SET DEFAULT next
 
 --
 -- TOC entry 3340 (class 2604 OID 25149)
--- Name: phd_type phd_type_id; Type: DEFAULT; Schema: public; 
+-- Name: thesis_type thesis_type_id; Type: DEFAULT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_type ALTER COLUMN phd_type_id SET DEFAULT nextval('public.seq_phd_type'::regclass);
+ALTER TABLE ONLY public.thesis_type ALTER COLUMN thesis_type_id SET DEFAULT nextval('public.seq_thesis_type'::regclass);
 
 
 --
@@ -3163,7 +3175,7 @@ SELECT pg_catalog.setval('public.seq_parameter', 1, true);
 --
 -- TOC entry 3800 (class 0 OID 24861)
 -- Dependencies: 249
--- Data for Name: phd_associated_company; Type: TABLE DATA; Schema: public; 
+-- Data for Name: thesis_associated_company; Type: TABLE DATA; Schema: public; 
 --
 
 
@@ -3179,12 +3191,12 @@ SELECT pg_catalog.setval('public.seq_parameter', 1, true);
 --
 -- TOC entry 3802 (class 0 OID 24871)
 -- Dependencies: 251
--- Data for Name: phd_type; Type: TABLE DATA; Schema: public; 
+-- Data for Name: thesis_type; Type: TABLE DATA; Schema: public; 
 --
 
-INSERT INTO public.phd_type (phd_type_id, phd_type_name) VALUES (1, 'Academic');
-INSERT INTO public.phd_type (phd_type_id, phd_type_name) VALUES (2, 'CIFRE');
-SELECT pg_catalog.setval('public.seq_phd_type', 2, true);
+INSERT INTO public.thesis_type (thesis_type_id, thesis_type_name) VALUES (1, 'Academic');
+INSERT INTO public.thesis_type (thesis_type_id, thesis_type_name) VALUES (2, 'CIFRE');
+SELECT pg_catalog.setval('public.seq_thesis_type', 2, true);
 
 --
 -- TOC entry 3803 (class 0 OID 24874)
@@ -3661,6 +3673,9 @@ ALTER TABLE ONLY public.evaluation_thesis
     ADD CONSTRAINT pk_evaluation_thesis PRIMARY KEY (id_activity);
 
 
+ALTER TABLE ONLY public.training_thesis
+    ADD CONSTRAINT pk_training_thesis PRIMARY KEY (id_activity);
+
 --
 -- TOC entry 3401 (class 2606 OID 25206)
 -- Name: evaluation_thesis_role pk_evaluation_thesis_role; Type: CONSTRAINT; Schema: public; 
@@ -3897,11 +3912,11 @@ ALTER TABLE ONLY public.patent
 
 --
 -- TOC entry 3453 (class 2606 OID 25258)
--- Name: phd_associated_company pk_phd_associated_company; Type: CONSTRAINT; Schema: public; 
+-- Name: thesis_associated_company pk_thesis_associated_company; Type: CONSTRAINT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_associated_company
-    ADD CONSTRAINT pk_phd_associated_company PRIMARY KEY (phd_student_id, company_id);
+ALTER TABLE ONLY public.thesis_associated_company
+    ADD CONSTRAINT pk_thesis_associated_company PRIMARY KEY (id_activity, company_id);
 
 
 --
@@ -3915,11 +3930,11 @@ ALTER TABLE ONLY public.phd_student
 
 --
 -- TOC entry 3457 (class 2606 OID 25262)
--- Name: phd_type pk_phd_type; Type: CONSTRAINT; Schema: public; 
+-- Name: thesis_type pk_thesis_type; Type: CONSTRAINT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_type
-    ADD CONSTRAINT pk_phd_type PRIMARY KEY (phd_type_id);
+ALTER TABLE ONLY public.thesis_type
+    ADD CONSTRAINT pk_thesis_type PRIMARY KEY (thesis_type_id);
 
 
 --
@@ -4433,6 +4448,14 @@ ALTER TABLE ONLY public.publication
     ADD CONSTRAINT activity_publication_fk FOREIGN KEY (id_activity) REFERENCES public.activity(id_activity);
 
 
+ALTER TABLE ONLY public.training_thesis
+    ADD CONSTRAINT activity_training_thesis_fk FOREIGN KEY (id_activity) REFERENCES public.activity(id_activity);
+
+ALTER TABLE ONLY public.training_thesis
+    ADD CONSTRAINT phd_student_training_thesis_fk FOREIGN KEY (phd_student_id) REFERENCES public.phd_student(phd_student_id);
+
+ALTER TABLE ONLY public.phd_student
+    ADD CONSTRAINT nationality_phd_student_fk FOREIGN KEY (nationality_id) REFERENCES public.nationality(nationality_id);
 --
 -- TOC entry 3597 (class 2606 OID 25447)
 -- Name: research_contract_funded_public_charitable_inst activity_research_contract_funded_public_charitable_inst_fk; Type: FK CONSTRAINT; Schema: public; 
@@ -4624,11 +4647,11 @@ ALTER TABLE ONLY public.national_international_collaboration
 
 --
 -- TOC entry 3582 (class 2606 OID 25552)
--- Name: phd_associated_company company_phd_associated_company_fk; Type: FK CONSTRAINT; Schema: public; 
+-- Name: thesis_associated_company company_thesis_associated_company_fk; Type: FK CONSTRAINT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_associated_company
-    ADD CONSTRAINT company_phd_associated_company_fk FOREIGN KEY (company_id) REFERENCES public.company(company_id);
+ALTER TABLE ONLY public.thesis_associated_company
+    ADD CONSTRAINT company_thesis_associated_company_fk FOREIGN KEY (company_id) REFERENCES public.company(company_id);
 
 
 --
@@ -4777,11 +4800,11 @@ ALTER TABLE ONLY public.researcher_nationality
 
 --
 -- TOC entry 3583 (class 2606 OID 25637)
--- Name: phd_associated_company phd_student_phd_associated_company_fk; Type: FK CONSTRAINT; Schema: public; 
+-- Name: thesis_associated_company training_thesis_thesis_associated_company_fk; Type: FK CONSTRAINT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_associated_company
-    ADD CONSTRAINT phd_student_phd_associated_company_fk FOREIGN KEY (phd_student_id) REFERENCES public.phd_student(phd_student_id);
+ALTER TABLE ONLY public.thesis_associated_company
+    ADD CONSTRAINT training_thesis_associated_company_fk FOREIGN KEY (id_activity) REFERENCES public.training_thesis(id_activity);
 
 
 --
@@ -4795,11 +4818,9 @@ ALTER TABLE ONLY public.supervisor
 
 --
 -- TOC entry 3584 (class 2606 OID 25647)
--- Name: phd_student phd_type_phd_student_fk; Type: FK CONSTRAINT; Schema: public; 
+-- Name: phd_student thesis_type_phd_student_fk; Type: FK CONSTRAINT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_student
-    ADD CONSTRAINT phd_type_phd_student_fk FOREIGN KEY (phd_type_id) REFERENCES public.phd_type(phd_type_id);
 
 
 --
@@ -4861,8 +4882,6 @@ ALTER TABLE ONLY public.contract
 -- Name: phd_student researcher_phd_student_fk; Type: FK CONSTRAINT; Schema: public; 
 --
 
-ALTER TABLE ONLY public.phd_student
-    ADD CONSTRAINT researcher_phd_student_fk FOREIGN KEY (researcher_id) REFERENCES public.researcher(researcher_id);
 
 
 --

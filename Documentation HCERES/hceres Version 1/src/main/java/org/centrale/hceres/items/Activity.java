@@ -33,6 +33,11 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Activity implements Serializable {
 
+    
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
+    private TrainingThesis trainingThesis;
+    
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,8 +93,10 @@ public class Activity implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     @JsonIgnore
     private PublicOutreach publicOutreach;
+    
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     private ReviewArticle ReviewArticle;
+    
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     @JsonIgnore
     private EvaluationThesis evaluationThesis;
@@ -469,6 +476,61 @@ public class Activity implements Serializable {
     }
 
     public void setLearnedScientificSociety(LearnedScientificSociety learnedScientificSociety) {
+        this.learnedScientificSociety = learnedScientificSociety;
+    }
+
+    public Activity() {
+    }
+
+    public TrainingThesis getTrainingThesis() {
+        return trainingThesis;
+    }
+
+    public void setTrainingThesis(TrainingThesis trainingThesis) {
+        this.trainingThesis = trainingThesis;
+    }
+
+    public Activity(TrainingThesis trainingThesis, Integer idActivity, Integer idTypeActivity, TypeActivity typeActivity, List<Researcher> researcherList, IncomingMobility incomingMobility, Education education, List<MailActivity> mailActivityList, InternationalCollaboration internationalCollaboration, Publication publication, ScientificExpertise scientificExpertise, InvolvementTrainingPedagogical involvementTrainingPedagogical, CompanyCreation companyCreation, LabcomCreation labcomCreation, SrAward srAward, PublicOutreach publicOutreach, ReviewArticle ReviewArticle, EvaluationThesis evaluationThesis, SeiNetworkUnitCreation seiNetworkUnitCreation, ToolProduct toolProduct, PostDoc postDoc, Patent patent, Book book, InvitedSeminar invitedSeminar, MeetingCongressOrg meetingCongressOrg, BookChapter bookChapter, Platform platform, Network network, InstitutionalComitee institutionalComitee, OutgoingMobility outgoingMobility, EditorialActivity editorialActivity, EducationalOutput educationalOutput, SeiIndustrialRDContract seiIndustrialRDContract, ProjectEvaluation projectEvaluation, LaboratoryEvaluation laboratoryEvaluation, SeiClinicalTrial seiClinicalTrial, OralComPoster oralComPoster, ResearchContractFundedCharit researchContractFundedCharit, SeiLeadConsortiumIndustry seiLeadConsortiumIndustry, SeiCifreFellowship seiCifreFellowship, LearnedScientificSociety learnedScientificSociety) {
+        this.trainingThesis = trainingThesis;
+        this.idActivity = idActivity;
+        this.idTypeActivity = idTypeActivity;
+        this.typeActivity = typeActivity;
+        this.researcherList = researcherList;
+        this.incomingMobility = incomingMobility;
+        this.education = education;
+        this.mailActivityList = mailActivityList;
+        this.internationalCollaboration = internationalCollaboration;
+        this.publication = publication;
+        this.scientificExpertise = scientificExpertise;
+        this.involvementTrainingPedagogical = involvementTrainingPedagogical;
+        this.companyCreation = companyCreation;
+        this.labcomCreation = labcomCreation;
+        this.srAward = srAward;
+        this.publicOutreach = publicOutreach;
+        this.ReviewArticle = ReviewArticle;
+        this.evaluationThesis = evaluationThesis;
+        this.seiNetworkUnitCreation = seiNetworkUnitCreation;
+        this.toolProduct = toolProduct;
+        this.postDoc = postDoc;
+        this.patent = patent;
+        this.book = book;
+        this.invitedSeminar = invitedSeminar;
+        this.meetingCongressOrg = meetingCongressOrg;
+        this.bookChapter = bookChapter;
+        this.platform = platform;
+        this.network = network;
+        this.institutionalComitee = institutionalComitee;
+        this.outgoingMobility = outgoingMobility;
+        this.editorialActivity = editorialActivity;
+        this.educationalOutput = educationalOutput;
+        this.seiIndustrialRDContract = seiIndustrialRDContract;
+        this.projectEvaluation = projectEvaluation;
+        this.laboratoryEvaluation = laboratoryEvaluation;
+        this.seiClinicalTrial = seiClinicalTrial;
+        this.oralComPoster = oralComPoster;
+        this.researchContractFundedCharit = researchContractFundedCharit;
+        this.seiLeadConsortiumIndustry = seiLeadConsortiumIndustry;
+        this.seiCifreFellowship = seiCifreFellowship;
         this.learnedScientificSociety = learnedScientificSociety;
     }
 

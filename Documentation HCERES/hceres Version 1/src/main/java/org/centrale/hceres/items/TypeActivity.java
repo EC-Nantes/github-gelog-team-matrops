@@ -31,15 +31,16 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class TypeActivity implements Serializable {
 
+    @Size(max = 2048)
+    @Column(name = "name_type")
+    private String nameType;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "id_type_activity")
     private Integer idTypeActivity;
 
-    @Size(max = 256)
-    @Column(name = "name_type")
-    private String nameType;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeActivity")
     @JsonIgnore
@@ -59,6 +60,13 @@ public class TypeActivity implements Serializable {
 
     public List<Activity> getActivityList() {
         return activityList;
+    }
+
+    public TypeActivity() {
+    }
+
+    public void setNameType(String nameType) {
+        this.nameType = nameType;
     }
     
 }

@@ -14,10 +14,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,17 +33,20 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class Company implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 2048)
+    @Column(name = "company_name")
+    private String companyName;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private Collection<ThesisAssociatedCompany> thesisAssociatedCompanyCollection;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "company_id")
     private Integer companyId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 256)
-    @Column(name = "company_name")
-    private String companyName;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<PhdAssociatedCompany> phdAssociatedCompanyList;
 
@@ -67,6 +72,19 @@ public class Company implements Serializable {
 
     public void setPhdAssociatedCompanyList(List<PhdAssociatedCompany> phdAssociatedCompanyList) {
         this.phdAssociatedCompanyList = phdAssociatedCompanyList;
+    }
+
+    public Company() {
+    }
+
+
+    @XmlTransient
+    public Collection<ThesisAssociatedCompany> getThesisAssociatedCompanyCollection() {
+        return thesisAssociatedCompanyCollection;
+    }
+
+    public void setThesisAssociatedCompanyCollection(Collection<ThesisAssociatedCompany> thesisAssociatedCompanyCollection) {
+        this.thesisAssociatedCompanyCollection = thesisAssociatedCompanyCollection;
     }
     
 }

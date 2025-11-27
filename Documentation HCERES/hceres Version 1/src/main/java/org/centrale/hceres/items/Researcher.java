@@ -29,6 +29,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @AllArgsConstructor
 public class Researcher implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 2048)
+    @Column(name = "researcher_surname")
+    private String researcherSurname;
+    @Size(max = 2048)
+    @Column(name = "researcher_name")
+    private String researcherName;
+    @Size(max = 2048)
+    @Column(name = "researcher_email")
+    private String researcherEmail;
+    @Size(max = 2048)
+    @Column(name = "researcher_orcid")
+    private String researcherOrcid;
+    @Size(max = 2048)
+    @Column(name = "researcher_login")
+    private String researcherLogin;
+    @Size(max = 1024)
+    @Column(name = "researcher_password")
+    private String researcherPassword;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,31 +65,6 @@ public class Researcher implements Serializable {
         this.researcherId = 0;
     }
 
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 256)
-    @Column(name = "researcher_surname")
-    private String researcherSurname;
-    
-    @Size(max = 256)
-    @Column(name = "researcher_name")
-    private String researcherName;
-    
-    @Size(max = 256)
-    @Column(name = "researcher_email")
-    private String researcherEmail;
-    
-    @Size(max = 256)
-    @Column(name = "researcher_orcid")
-    private String researcherOrcid;
-    
-    @Size(max = 256)
-    @Column(name = "researcher_login")
-    private String researcherLogin;
-    
-    @Size(max = 1024)
-    @Column(name = "researcher_password")
-    private String researcherPassword;
     @JsonIgnore
     @ManyToMany(mappedBy = "researcherList")
     private List<Nationality> nationalityList;
@@ -92,9 +88,6 @@ public class Researcher implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "researcherId")
     private List<Supervisor> supervisorList;
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "researcherId")
-    private List<PhdStudent> phdStudentList;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "researcher")
     private Admin admin;
 
@@ -118,7 +111,6 @@ public class Researcher implements Serializable {
         this.lastResearcherStatus = lastResearcherStatus;
         this.teamReferentList = teamReferentList;
         this.supervisorList = supervisorList;
-        this.phdStudentList = phdStudentList;
         this.admin = admin;
         this.belongsTeamList = belongsTeamList;
     }
@@ -184,9 +176,6 @@ public class Researcher implements Serializable {
         return supervisorList;
     }
 
-    public List<PhdStudent> getPhdStudentList() {
-        return phdStudentList;
-    }
 
     public Admin getAdmin() {
         return admin;
@@ -252,9 +241,6 @@ public class Researcher implements Serializable {
         this.supervisorList = supervisorList;
     }
 
-    public void setPhdStudentList(List<PhdStudent> phdStudentList) {
-        this.phdStudentList = phdStudentList;
-    }
 
     public void setAdmin(Admin admin) {
         this.admin = admin;
@@ -263,6 +249,6 @@ public class Researcher implements Serializable {
     public void setBelongsTeamList(List<BelongsTeam> belongsTeamList) {
         this.belongsTeamList = belongsTeamList;
     }
-    
+
     
 }
