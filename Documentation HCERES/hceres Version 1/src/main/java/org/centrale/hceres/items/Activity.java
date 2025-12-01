@@ -33,7 +33,7 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Activity implements Serializable {
 
-    
+    //@JsonIgnore si il y a des boucles infinies. Attention, ici, on bloque la receptions des données des activités (Par ex : on reçoit que les chercheur, pas les attributs de sa publication)
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     private TrainingThesis trainingThesis;
     
@@ -155,7 +155,7 @@ public class Activity implements Serializable {
     private OralComPoster oralComPoster;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
-    @JsonIgnore
+    
     private ResearchContractFundedCharit researchContractFundedCharit;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "activity")
     @JsonIgnore
@@ -169,6 +169,14 @@ public class Activity implements Serializable {
 
     public Integer getIdActivity() {
         return idActivity;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public TypeActivity getTypeActivity() {
+        return typeActivity;
     }
 
     public void setIdActivity(Integer idActivity) {

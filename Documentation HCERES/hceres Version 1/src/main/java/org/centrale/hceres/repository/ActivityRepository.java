@@ -15,11 +15,10 @@ import java.util.List;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Integer>{
 
-    // using jpa repository convention => no need to explicite named query
     List<Activity> findByIdTypeActivity(Integer idTypeActivity);
 
-    @Query("FROM Activity a WHERE a.idActivity=:idActivity")
-    Activity findByIdActivity(@Param("idActivity") Integer idActivity);
+    // Spring va générer la requête automatiquement à partir du nom
+    Activity findByIdActivity(Integer idActivity);
 
     @Modifying
     @Transactional

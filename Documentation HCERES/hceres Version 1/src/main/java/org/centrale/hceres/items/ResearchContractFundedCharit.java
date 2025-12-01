@@ -36,10 +36,11 @@
         @Column(name = "id_activity")
         private Integer idActivity;
 
-        @JsonIgnore
+        
         @JoinColumn(name = "id_activity")
         @MapsId
         @OneToOne(cascade = CascadeType.ALL)
+        @JsonIgnore
         private Activity activity;
 
         @Column(name = "date_contract_award")

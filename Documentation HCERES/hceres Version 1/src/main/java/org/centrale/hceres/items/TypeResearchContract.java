@@ -8,6 +8,7 @@
  * L LETERTRE, S LIMOUX, JY MARTIN
  * -------------------------------------------------------------------------------- */
 package org.centrale.hceres.items;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,7 @@ public class TypeResearchContract implements Serializable {
     @Column(name = "name_choice")
     private String nameChoice;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeResearchContract")
+    @JsonIgnore
     private List<ResearchContractFundedCharit> researchContractFundedCharitList;
 
     public Integer getIdType() {

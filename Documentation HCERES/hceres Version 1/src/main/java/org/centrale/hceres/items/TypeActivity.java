@@ -68,5 +68,15 @@ public class TypeActivity implements Serializable {
     public void setNameType(String nameType) {
         this.nameType = nameType;
     }
+
+    public void setIdTypeActivity(Integer idTypeActivity) {
+        this.idTypeActivity = idTypeActivity;
+    }
+
+    public void setActivityList(List<Activity> activityList) {
+        this.activityList = activityList;
+    }
+    
+    
     
 }

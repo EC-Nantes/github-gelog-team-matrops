@@ -32,7 +32,7 @@ public class ResearchContractFundedCharitService {
      */
     public List<Activity> getResearchContractFundedCharits() {
         // Type d'activité correct
-        return activityRepo.findByIdTypeActivity(TypeActivityId.BOOK.getId());
+        return activityRepo.findByIdTypeActivity(TypeActivityId.RESEARCH_CONTRACT_FUNDED_PUBLIC_CHARITABLE_INST.getId());
     }
 
     /**
